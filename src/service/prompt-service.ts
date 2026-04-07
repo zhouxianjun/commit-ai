@@ -3,8 +3,8 @@ import { ConfigKeys, ConfigService } from './config-service';
 import type { ChatMessage } from '../providers';
 import path from 'path';
 import * as fs from 'fs-extra';
-import type { Repository } from '../git';
-import { getDiffStaged } from '../git-utils';
+import type { Repository } from '../utils/git';
+import { getDiffStaged } from '../utils/git-utils';
 
 @injectable()
 export class PromptService {

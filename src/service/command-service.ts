@@ -18,18 +18,10 @@ export class CommandService implements vscode.Disposable {
     this.registerCommand(Commands.GENERATE_COMMIT, (args) =>
       this.commitService.generateCommitMessage(args)
     );
-    this.registerCommand(Commands.SHOW_TOKEN_INFO, () => this.showTokenInfo());
   }
 
   private openSettings() {
     return vscode.commands.executeCommand('workbench.action.openSettings', NAME);
-  }
-  private async showTokenInfo() {
-    const result = await vscode.window.showInformationMessage(
-      'Token display is active. You can configure limits and display options in settings.',
-      'Open Settings'
-    );
-    result === 'Open Settings' && this.openSettings();
   }
 
   private registerCommand(command: string, handler: (...args: any[]) => any) {

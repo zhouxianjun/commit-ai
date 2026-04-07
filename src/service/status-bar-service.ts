@@ -1,4 +1,4 @@
-import { Commands } from '../consts';
+import { Commands, NAME } from '../consts';
 import { inject, injectable } from 'inversify';
 import * as vscode from 'vscode';
 import { TokenService, type TokenState } from './token-service';
@@ -30,7 +30,7 @@ export class StatusBarService implements vscode.Disposable {
     @inject(ConfigService) private configService: ConfigService
   ) {
     this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-    this.statusBarItem.command = Commands.SHOW_TOKEN_INFO;
+    this.statusBarItem.command = Commands.GENERATE_COMMIT;
     this.statusBarItem.show();
 
     this.tokenService.onChange((state) => this.updateStatusBar(state));
@@ -96,6 +96,11 @@ export class StatusBarService implements vscode.Disposable {
 
     tooltip.appendMarkdown('\n---\n\n');
     tooltip.appendMarkdown(`${config.icon} Status: **${config.label || config.text || 'Ready'}**`);
+    tooltip.appendMarkdown(' | ');
+    tooltip.appendMarkdown(
+      `[$(settings) Settings](command:workbench.action.openSettings?%22${NAME}%22)\n\n`
+    );
+    tooltip.appendMarkdown('Tip: Click the status bar to generate commit message.');
 
     return tooltip;
   }

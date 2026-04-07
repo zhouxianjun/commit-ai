@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { ConfigKeys, ConfigService, NAME } from './config-service';
 import type { ReasoningEffort } from 'openai/resources';
 import * as vscode from 'vscode';
-import { zeroToUndefined } from '../utils';
+import { zeroToUndefined } from '../utils/utils';
 
 export interface ModelConfig {
   name: string;

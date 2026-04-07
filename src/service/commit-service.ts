@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { ProgressHandler } from '../utils';
-import { getCurrentGitRepository, getGitApi } from '../git-utils';
+import { ProgressHandler } from '../utils/utils';
+import { getCurrentGitRepository, getGitApi } from '../utils/git-utils';
 import { ProviderService } from './provider-service';
 import { PromptService } from './prompt-service';
-import type { Repository } from '../git';
+import type { Repository } from '../utils/git';
 import * as fs from 'fs-extra';
 
 @injectable()
@@ -25,10 +25,13 @@ export class CommitService {
       }
       progress.report({ message: 'Getting staged changes...' });
       const messages = await this.promptService.buildPromptMessages(repo);
+      if (!messages) {
+        throw new Error('No staged changes found. Please stage your changes first.');
+      }
       progress.report({ message: `Generating commit message...` });
       const commitMessage = await this.providerService.chatCompletion(messages);
       if (!commitMessage) {
-        throw new Error('Failed to generate commit message');
+        throw new Error('AI provider returned an empty message.');
       }
 
       scmInputBox.value = commitMessage;

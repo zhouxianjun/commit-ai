@@ -6,7 +6,6 @@ export const NAME = name;
 export const Context: ServiceIdentifier<vscode.ExtensionContext> = Symbol('Context');
 export const BASIC_COMMAND = `extension.${NAME}`;
 export const Commands = {
-  GENERATE_COMMIT: BASIC_COMMAND,
-  SHOW_TOKEN_INFO: `${BASIC_COMMAND}.show-token-info`
+  GENERATE_COMMIT: BASIC_COMMAND
 } as const;
 export type Commands = (typeof Commands)[keyof typeof Commands];

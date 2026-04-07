@@ -4,7 +4,7 @@ import { ConfigKeys, ConfigService } from './config-service';
 import { LLMServerService } from './llm-server-service';
 import { ModelContextService } from './model-context';
 import { calculateTokens, type TokenCountMode } from '../utils/tokens';
-import { getCurrentGitRepository, getGitApi } from '../git-utils';
+import { getCurrentGitRepository, getGitApi } from '../utils/git-utils';
 import { debounce, isNil, type DebouncedFunc } from 'lodash-es';
 import { PromptService } from './prompt-service';
 
