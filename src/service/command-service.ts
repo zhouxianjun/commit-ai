@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { NAME } from './config-service';
 import { inject, injectable } from 'inversify';
 import { CommitService } from './commit-service';
-import { Context } from '../consts';
+import { Commands, Context } from '../consts';
 
 @injectable()
 export class CommandService implements vscode.Disposable {
@@ -15,11 +15,10 @@ export class CommandService implements vscode.Disposable {
   }
 
   registerCommands() {
-    this.registerCommand('extension.ai-commit', (args) =>
+    this.registerCommand(Commands.GENERATE_COMMIT, (args) =>
       this.commitService.generateCommitMessage(args)
     );
-    this.registerCommand('extension.ai-commit.token-info', this.showTokenInfo);
-    this.registerCommand('extension.ai-commit.show-token-info', () => this.showTokenInfo());
+    this.registerCommand(Commands.SHOW_TOKEN_INFO, () => this.showTokenInfo());
   }
 
   private openSettings() {

@@ -14,6 +14,7 @@ export interface TokenState {
   totalChars: number;
   usagePercent: number | undefined;
   status: 'idle' | 'analyzing' | 'ready' | 'exceeded' | 'warning' | 'caution' | 'ok';
+  modelName?: string;
 }
 export type TokenStateChangeListener = (state: TokenState) => void;
 
@@ -84,7 +85,8 @@ export class TokenService implements vscode.Disposable {
     this.updateState({
       tokens: tokenResult.estimated,
       limit,
-      totalChars: tokenResult.totalChars
+      totalChars: tokenResult.totalChars,
+      modelName: model.name
     });
 
     return this._state;
@@ -140,15 +142,16 @@ export class TokenService implements vscode.Disposable {
     }
   }
   private updateState(state: Partial<TokenState>) {
-    if (isNil(state.usagePercent)) {
-      state.usagePercent = this._state.limit
-        ? (this._state.tokens / this._state.limit) * 100
-        : undefined;
+    const newState = { ...this._state, ...state };
+
+    if (isNil(newState.usagePercent) && newState.limit) {
+      newState.usagePercent = (newState.tokens / newState.limit) * 100;
     }
-    if (isNil(state.status)) {
-      state.status = this.getStatus(state.usagePercent);
+    if (['idle', 'analyzing'].includes(newState.status)) {
+      newState.status = this.getStatus(newState.usagePercent);
     }
-    this._state = { ...this._state, ...state };
+
+    this._state = newState;
     this.notifyListeners();
   }
   private getStatus(usagePercent: number | undefined): TokenState['status'] {

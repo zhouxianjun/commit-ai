@@ -17,6 +17,8 @@ interface ModelContextCache {
 @injectable()
 export class ModelContextService implements vscode.Disposable {
   private updateTimer: NodeJS.Timeout | null = null;
+  private fullContextMap: Record<string, number> | null = null;
+  private normalizedIndex: Map<string, string> | null = null;
 
   constructor(@inject(Context) private readonly context: vscode.ExtensionContext) {
     this.updateTimer = setInterval(() => this.updateCacheIfNeeded(), CACHE_TTL_MS);
@@ -30,10 +32,38 @@ export class ModelContextService implements vscode.Disposable {
   }
 
   getContextWindowLimit(model: string): number | undefined {
-    const modelContextMap = this.getModelContextMap();
-    const modelKeys = Object.keys(modelContextMap);
-    const modelKey = this.searchModelKey(model.toLocaleLowerCase(), modelKeys);
-    return modelContextMap[modelKey];
+    if (!this.fullContextMap || !this.normalizedIndex) {
+      this.rebuildIndex();
+    }
+
+    const map = this.fullContextMap!;
+    const index = this.normalizedIndex!;
+
+    const input = model.toLowerCase();
+    // 1. Exact or Case-insensitive match
+    if (index.has(input)) {
+      return map[index.get(input)!];
+    }
+
+    // 2. Normalize and match (removes - . _ etc)
+    const normalizedInput = this.normalize(input);
+    if (index.has(normalizedInput)) {
+      return map[index.get(normalizedInput)!];
+    }
+
+    // 3. Try with model name only (after /)
+    if (input.includes('/')) {
+      const modelOnly = input.split('/').pop()!;
+      if (index.has(modelOnly)) {
+        return map[index.get(modelOnly)!];
+      }
+      const normalizedModelOnly = this.normalize(modelOnly);
+      if (index.has(normalizedModelOnly)) {
+        return map[index.get(normalizedModelOnly)!];
+      }
+    }
+
+    return undefined;
   }
 
   async updateCacheIfNeeded() {
@@ -49,31 +79,48 @@ export class ModelContextService implements vscode.Disposable {
       if (remote && Object.keys(remote).length > 0) {
         await this.context.globalState.update(CACHE_KEY, remote);
         await this.context.globalState.update(CACHE_TIMESTAMP_KEY, now);
+        this.rebuildIndex(); // Invalidate and rebuild index
       }
     } catch {
       // Silently fail -- use built-in mapping
     }
   }
 
-  private searchModelKey(model: string, modelKeys: string[]) {
-    if (modelKeys.includes(model)) {
-      return model;
-    }
-    const includeModelKeys = modelKeys.filter((key) => key.includes(model));
-    const provider = model.split('/')[0];
-    const matchProviderKey = includeModelKeys.find((key) => key.startsWith(provider));
-    if (matchProviderKey) {
-      return matchProviderKey;
-    }
-    return includeModelKeys[0];
+  private normalize(s: string): string {
+    return s.toLowerCase().replace(/[^a-z0-9]/g, '');
   }
 
-  private getModelContextMap() {
+  private rebuildIndex() {
+    const models = BUILTIN_MODEL_CONTEXT.models || {};
     const cached = this.context.globalState.get<ModelContextCache>(CACHE_KEY);
-    if (!cached) {
-      return BUILTIN_MODEL_CONTEXT;
+    const rawMap = cached ? { ...models, ...cached } : models;
+
+    const index = new Map<string, string>();
+    for (const key of Object.keys(rawMap)) {
+      const lowerKey = key.toLowerCase();
+      index.set(lowerKey, key);
+
+      const normKey = this.normalize(key);
+      if (!index.has(normKey)) {
+        index.set(normKey, key);
+      }
+
+      // If key has provider prefix like "openai/gpt-4", also index "gpt-4"
+      if (key.includes('/')) {
+        const parts = key.split('/');
+        const modelOnly = parts[parts.length - 1].toLowerCase();
+        if (!index.has(modelOnly)) {
+          index.set(modelOnly, key);
+        }
+        const normModelOnly = this.normalize(modelOnly);
+        if (!index.has(normModelOnly)) {
+          index.set(normModelOnly, key);
+        }
+      }
     }
-    return { ...BUILTIN_MODEL_CONTEXT, cached };
+
+    this.fullContextMap = rawMap;
+    this.normalizedIndex = index;
   }
 
   private async fetchRemoteModelContext() {

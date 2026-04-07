@@ -1,3 +1,4 @@
+import { Commands } from '../consts';
 import { inject, injectable } from 'inversify';
 import * as vscode from 'vscode';
 import { TokenService, type TokenState } from './token-service';
@@ -29,7 +30,7 @@ export class StatusBarService implements vscode.Disposable {
     @inject(ConfigService) private configService: ConfigService
   ) {
     this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-    this.statusBarItem.command = 'extension.ai-commit.showTokenInfo';
+    this.statusBarItem.command = Commands.SHOW_TOKEN_INFO;
     this.statusBarItem.show();
 
     this.tokenService.onChange((state) => this.updateStatusBar(state));
@@ -56,27 +57,44 @@ export class StatusBarService implements vscode.Disposable {
   }
 
   private formatText(state: TokenState): string {
-    const tokens = state.tokens.toLocaleString();
-    const limit = state.limit?.toLocaleString();
-    const usage = Math.round(state.usagePercent || 0);
+    const tokens = this.compactNumber(state.tokens);
+    const usage =
+      state.limit && state.usagePercent !== undefined
+        ? ` (${Math.round(state.usagePercent)}%)`
+        : '';
 
-    return state.limit
-      ? `$(symbol-numeric) ~${tokens}/${limit} (${usage}%)`
-      : `$(symbol-numeric) ~${tokens} tokens`;
+    return `$(sparkle) ~${tokens}${usage}`;
+  }
+
+  private compactNumber(num: number): string {
+    if (num < 1000) {
+      return num.toString();
+    }
+    if (num < 1000000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    }
+    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'm';
   }
 
   private formatTooltip(state: TokenState, config: StatusConfig): vscode.MarkdownString {
     const tooltip = new vscode.MarkdownString();
     tooltip.isTrusted = true;
-    tooltip.appendMarkdown('**Token Count Info**\n\n');
+    tooltip.supportThemeIcons = true;
+    tooltip.appendMarkdown('**Token Usage Details**\n\n');
 
-    tooltip.appendMarkdown(`- Characters: **${state.totalChars.toLocaleString()}**\n`);
-    tooltip.appendMarkdown(`- Estimated tokens: **~${state.tokens.toLocaleString()}**\n`);
+    if (state.modelName) {
+      tooltip.appendMarkdown(`- Current Model: **${state.modelName}**\n`);
+    }
 
-    state.limit && tooltip.appendMarkdown(`- Model limit: **${state.limit.toLocaleString()}**\n`);
-    state.limit &&
-      tooltip.appendMarkdown(`- Usage: **${Math.round(state.usagePercent || 0)}%**\n\n`);
+    tooltip.appendMarkdown(`- Total Characters: **${state.totalChars.toLocaleString()}**\n`);
+    tooltip.appendMarkdown(`- Estimated Tokens: **~${state.tokens.toLocaleString()}**\n`);
 
+    if (state.limit) {
+      tooltip.appendMarkdown(`- Model Window Limit: **${state.limit.toLocaleString()}**\n`);
+      tooltip.appendMarkdown(`- Context Usage: **${(state.usagePercent || 0).toFixed(1)}%**\n`);
+    }
+
+    tooltip.appendMarkdown('\n---\n\n');
     tooltip.appendMarkdown(`${config.icon} Status: **${config.label || config.text || 'Ready'}**`);
 
     return tooltip;
