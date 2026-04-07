@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
 import * as vscode from 'vscode';
-import { name } from '../../package.json';
+import { NAME } from '../consts';
 
-export const NAME = name;
+export { NAME };
 
 export enum ConfigKeys {
   SERVERS = 'servers',

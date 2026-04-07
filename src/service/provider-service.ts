@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { LLMServerService } from './llm-server-service';
 import { createProvider, type ChatMessage } from '../providers';
+import { NAME } from '../consts';
 
 @injectable()
 export class ProviderService {
@@ -10,7 +11,7 @@ export class ProviderService {
     const servers = this.buildServerProvider();
     if (servers.length === 0) {
       throw new Error(
-        'No AI servers configured. Please configure at least one server in ai-commit.servers.'
+        `No AI servers configured. Please configure at least one server in ${NAME}.servers.`
       );
     }
 

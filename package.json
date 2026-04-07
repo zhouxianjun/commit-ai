@@ -287,7 +287,6 @@
     }
   },
   "activationEvents": [
-    "onCommand:ai-commit",
     "onStartupFinished"
   ],
   "icon": "images/logo.png",
