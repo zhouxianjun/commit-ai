@@ -2,13 +2,13 @@
 
 <div align="center">
 
-<img height="120" src="https://github.com/Sitoi/ai-commit/blob/main/images/logo.png?raw=true">
+<img height="120" src="https://github.com/zhouxianjun/ai-commit/blob/main/images/logo.png?raw=true">
 
-<h1>AI Commit</h1>
+<h1>CommitAI</h1>
 
-使用 OpenAI / Azure OpenAI / DeepSeek / Gemini API 审查 Git 暂存区修改，生成符合 Conventional Commit 规范的提交消息，简化提交流程，保持提交规范一致。
+基于 AI 的 VS Code 自动化提交助手。支持多引擎、高可靠的 Conventional Commit 消息生成。
 
-[English](./README.md) · **简体中文** · [报告问题][github-issues-link] · [请求功能][github-issues-link]
+[English](./README.md) · **简体中文** · [报告问题](https://github.com/zhouxianjun/ai-commit/issues) · [请求功能](https://github.com/zhouxianjun/ai-commit/issues)
 
 <!-- SHIELD GROUP -->
 
@@ -21,140 +21,86 @@
 [![][avarage-rating-shield]][avarage-rating-link]
 [![][github-license-shield]][github-license-link]
 
-![](https://github.com/sitoi/ai-commit/blob/main/aicommit.gif?raw=true)
+![](https://github.com/zhouxianjun/ai-commit/blob/main/aicommit.gif?raw=true)
 
 </div>
 
-## ✨ 特性
+## 📖 项目简介
 
-- 🤯 支持使用 OpenAI / Azure OpenAI / DeepSeek / Gemini API 根据 git diffs 自动生成提交信息
-- 🗺️ 支持多语言提交信息
-- 😜 支持添加 Gitmoji
-- 🛠️ 支持自定义系统提示词
-- 📝 支持 Conventional Commits 规范
+**CommitAI** 是一款专为 VS Code 打造的 AI 辅助提交工具。它能够智能扫描你的 Git 暂存区 (Staged) 变化，结合代码上下文，自动生成符合 Conventional Commits 规范的提交信息。
 
-## 📦 安装
+本项目在底层架构上参考了 [ai-commit](https://github.com/Sitoi/ai-commit) 的实现思路，但内部逻辑经过了完全重构，显著增强了稳定性，并引入了多项高级特性。
 
-1. 在 VSCode 中搜索 "AI Commit" 并点击 "Install" 按钮。
-2. 从 [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Sitoi.ai-commit) 直接安装。
+## ✨ 核心特性
 
-> **Note**\
-> 请确保 Node.js 版本 >= 16
+- **🚀 自动切换与故障转移 (Failover)**
+  - 支持配置多个 AI 服务器（OpenAI, Azure, Gemini 等）。
+  - 当首选服务器超时或异常时，自动按顺序尝试备用服务器，确保生成过程不中断。
+- **⚖️ 精确的 Token 监控**
+  - 集成 `tiktoken` 提供像素级的 Token 计算精度。
+  - 并在 VS Code 状态栏实时展示预估消耗，防止超出模型上下文限制。
+- **🤖 广泛的模型兼容性**
+  - **OpenAI**: 支持 GPT-4o, GPT-4o-mini 以及 o1/o3 推理模型（支持设置推理力度）。
+  - **Azure OpenAI**: 完美支持企业级 Azure 接口。
+  - **Google Gemini**: 支持最新的 Gemini 2.0 Flash/Pro。
+  - **DeepSeek / 其他**: 只要兼容 OpenAI 接口标准的模型均可直接接入。
+- **📝 提交规范一致性**
+  - 默认输出风格严谨的 Conventional Commits。
+  - **Gitmoji 支持**: 自由开启或关闭表情符号。
+  - **多语言输出**: 支持中文、英文、日文、韩文等 19 种语言。
+- **🛠️ 极致的自定义能力**
+  - 支持自定义系统 Prompt，可针对项目需求定制特殊的提交风格。
+  - 支持在生成前从提交框读取额外上下文信息，引导 AI 生成更精准的描述。
 
-## 🤯 使用
+## 📦 安装方法
 
-1. 确保您已经安装并启用了 `AI Commit` 扩展。
-2. 在 `VSCode` 设置中，找到 "ai-commit" 配置项，并根据需要进行配置：
-3. 在项目中进行更改并将更改添加到暂存区 (git add)。
-4. (可选) 如果您想为提交消息提供额外的上下文，请在点击 AI Commit 按钮之前，在源代码管理面板的消息输入框中输入上下文。
-5. 在 `Source Control` 面板的提交消息输入框旁边，单击 `AI Commit` 图标按钮。点击后，扩展将生成 Commit 信息（如果提供了额外上下文，将会考虑在内）并填充到输入框中。
-6. 审核生成的 Commit 信息，如果满意，请提交更改。
+1. 在 VS Code 扩展商店搜索 `CommitAI`。
+2. 点击安装（开发者：`alone`）。
+3. 确保本地安装了 Node.js >= 16。
 
-> **Note**\
-> 如果超过最大 token 长度请分批将代码添加到暂存区。
+## 🤯 使用流程
 
-### ⚙️ 配置
+1. **配置服务**: 在 VS Code 设置中搜索 `commit-ai.servers`，配置你的 API Key。
+2. **暂存更改**: 在 Git 面板中将修改的文件 `git add` 到暂存区。
+3. **输入引导 (可选)**: 如果有特殊说明，可以在提交框先写一段话。
+4. **一键生成**: 点击提交框右上角的 `$(sparkle)`（或 CommitAI）图标。
+5. **确认提交**: 确认生成的描述无误后，点击勾选提交。
 
-> **Note** Version >= 0.0.5 不需要配置 `EMOJI_ENABLED` 和 `FULL_GITMOJI_SPEC`，默认提示词为 [prompt/without_gitmoji.md](./prompt/with_gitmoji.md)，如果不需要使用 `Gitmoji`，请将 `SYSTEM_PROMPT` 设置为您的自定义提示词, 请参考 [prompt/without_gitmoji.md](./prompt/without_gitmoji.md)。
+## ⚙️ 详细配置项
 
-在 `VSCode` 设置中，找到 "ai-commit" 配置项，并根据需要进行配置
+| 配置名称 | 类型 | 默认值 | 描述 |
+| :--- | :---: | :---: | :--- |
+| `commit-ai.servers` | Array | `[]` | 配置多组 AI 引擎，支持 OpenAI, Azure, Gemini 等。 |
+| `commit-ai.AI_COMMIT_LANGUAGE` | String | `English` | 设置提交信息的语言（已预设 19 种选项）。 |
+| `commit-ai.USE_GITMOJI` | Boolean | `true` | 是否在消息前缀添加 Gitmoji（如 ✨, 🐛）。 |
+| `commit-ai.TOKEN_COUNT_MODE` | Enum | `fast` | `fast` 为快速估算，`accurate` 使用 tiktoken 进行精确计算。 |
+| `commit-ai.SHOW_TOKEN_COUNT` | Boolean | `true` | 是否在底部状态栏显示当前暂存内容的 Token 预估。 |
 
-| 配置               |  类型  |  默认   | 必要 |                                                                     备注                                                                     |
-| :----------------- | :----: | :-----: | :--: | :------------------------------------------------------------------------------------------------------------------------------------------: |
-| servers            | array  |   []    |  是  | AI 服务器列表。每项：`{ type, baseURL?, apiKey, apiVersion?, timeout?, models: [{ name, temperature? }] }`。按顺序尝试，失败自动切换下一个。 |
-| timeout            | number |  60000  |  否  |                                        全局默认超时时间（ms）。单个 server 的 `timeout` 会覆盖此值。                                         |
-| temperature        | number |   0.7   |  否  |                                        全局默认温度（0-2）。单个 model 的 `temperature` 会覆盖此值。                                         |
-| AI_COMMIT_LANGUAGE | string | English |  是  |                                                                支持 19 种语言                                                                |
-| SYSTEM_PROMPT      | string |  None   |  否  |                                                               自定义系统提示词                                                               |
+## 键盘快捷键 (推荐自定义)
 
-**服务器配置示例：**
+可以在 VS Code 快捷键设置中为命令 `extension.commit-ai` 绑定你习惯的操作。
 
-```json
-{
-  "ai-commit.servers": [
-    {
-      "type": "openai",
-      "baseURL": "https://api.openai.com/v1",
-      "apiKey": "sk-xxx",
-      "timeout": 30000,
-      "models": [{ "name": "gpt-4o", "temperature": 0.5 }, { "name": "gpt-4o-mini" }]
-    },
-    {
-      "type": "azure",
-      "baseURL": "https://xxx.openai.azure.com",
-      "apiKey": "xxx",
-      "apiVersion": "2024-02-15-preview",
-      "models": [{ "name": "gpt-4" }]
-    },
-    {
-      "type": "gemini",
-      "apiKey": "xxx",
-      "models": [{ "name": "gemini-2.0-flash" }]
-    }
-  ]
-}
-```
+## 🔗 链接与反馈
 
-## ⌨️ 本地开发
-
-可以使用 Github Codespaces 进行在线开发：
-
-[![][github-codespace-shield]][github-codespace-link]
-
-或者，可以克隆存储库并运行以下命令进行本地开发：
-
-```bash
-$ git clone https://github.com/sitoi/ai-commit.git
-$ cd ai-commit
-$ pnpm install
-```
-
-在 VSCode 中打开项目文件夹。按 F5 键运行项目。会弹出一个新的 Extension Development Host 窗口，并在其中启动插件。
-
-## 🤝 参与贡献
-
-我们非常欢迎各种形式的贡献。如果你对贡献代码感兴趣，可以查看我们的 GitHub [Issues][github-issues-link]，大展身手，向我们展示你的奇思妙想。
-
-[![][pr-welcome-shield]][pr-welcome-link]
-
-### 💗 感谢我们的贡献者
-
-[![][github-contrib-shield]][github-contrib-link]
-
-## 🔗 链接
-
-### Credits
-
-- **auto-commit** - <https://github.com/lynxife/auto-commit>
-- **opencommit** - <https://github.com/di-sukharev/opencommit>
+- **特别鸣谢**: 本项目参考了 [Sitoi/ai-commit](https://github.com/Sitoi/ai-commit) 的核心概念。
+- **License**: [MIT](./LICENSE)
 
 ---
 
-## 📝 License
-
-This project is [MIT](./LICENSE) licensed.
-
 <!-- LINK GROUP -->
-
-[github-codespace-link]: https://codespaces.new/sitoi/ai-commit
-[github-codespace-shield]: https://github.com/sitoi/ai-commit/blob/main/images/codespaces.png?raw=true
-[github-contributors-link]: https://github.com/sitoi/ai-commit/graphs/contributors
-[github-contributors-shield]: https://img.shields.io/github/contributors/sitoi/ai-commit?color=c4f042&labelColor=black&style=flat-square
-[github-forks-link]: https://github.com/sitoi/ai-commit/network/members
-[github-forks-shield]: https://img.shields.io/github/forks/sitoi/ai-commit?color=8ae8ff&labelColor=black&style=flat-square
-[github-issues-link]: https://github.com/sitoi/ai-commit/issues
-[github-issues-shield]: https://img.shields.io/github/issues/sitoi/ai-commit?color=ff80eb&labelColor=black&style=flat-square
-[github-license-link]: https://github.com/sitoi/ai-commit/blob/main/LICENSE
-[github-license-shield]: https://img.shields.io/github/license/sitoi/ai-commit?color=white&labelColor=black&style=flat-square
-[github-stars-link]: https://github.com/sitoi/ai-commit/network/stargazers
-[github-stars-shield]: https://img.shields.io/github/stars/sitoi/ai-commit?color=ffcb47&labelColor=black&style=flat-square
-[pr-welcome-link]: https://github.com/sitoi/ai-commit/pulls
-[pr-welcome-shield]: https://img.shields.io/badge/🤯_pr_welcome-%E2%86%92-ffcb47?labelColor=black&style=for-the-badge
-[github-contrib-link]: https://github.com/sitoi/ai-commit/graphs/contributors
-[github-contrib-shield]: https://contrib.rocks/image?repo=sitoi%2Fai-commit
-[vscode-marketplace-link]: https://marketplace.visualstudio.com/items?itemName=Sitoi.ai-commit
-[vscode-marketplace-shield]: https://img.shields.io/vscode-marketplace/v/Sitoi.ai-commit.svg?label=vscode%20marketplace&color=blue&labelColor=black&style=flat-square
-[total-installs-link]: https://marketplace.visualstudio.com/items?itemName=Sitoi.ai-commit
-[total-installs-shield]: https://img.shields.io/vscode-marketplace/d/Sitoi.ai-commit.svg?&labelColor=black&style=flat-square
-[avarage-rating-link]: https://marketplace.visualstudio.com/items?itemName=Sitoi.ai-commit
-[avarage-rating-shield]: https://img.shields.io/vscode-marketplace/r/Sitoi.ai-commit.svg?color=green&labelColor=black&style=flat-square
+[github-contributors-link]: https://github.com/zhouxianjun/ai-commit/graphs/contributors
+[github-contributors-shield]: https://img.shields.io/github/contributors/zhouxianjun/ai-commit?color=c4f042&labelColor=black&style=flat-square
+[github-forks-link]: https://github.com/zhouxianjun/ai-commit/network/members
+[github-forks-shield]: https://img.shields.io/github/forks/zhouxianjun/ai-commit?color=8ae8ff&labelColor=black&style=flat-square
+[github-issues-link]: https://github.com/zhouxianjun/ai-commit/issues
+[github-issues-shield]: https://img.shields.io/github/issues/zhouxianjun/ai-commit?color=ff80eb&labelColor=black&style=flat-square
+[github-license-link]: https://github.com/zhouxianjun/ai-commit/blob/main/LICENSE
+[github-license-shield]: https://img.shields.io/github/license/zhouxianjun/ai-commit?color=white&labelColor=black&style=flat-square
+[github-stars-link]: https://github.com/zhouxianjun/ai-commit/network/stargazers
+[github-stars-shield]: https://img.shields.io/github/stars/zhouxianjun/ai-commit?color=ffcb47&labelColor=black&style=flat-square
+[vscode-marketplace-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai
+[vscode-marketplace-shield]: https://img.shields.io/vscode-marketplace/v/zhouxianjun.commit-ai.svg?label=vscode%20marketplace&color=blue&labelColor=black&style=flat-square
+[total-installs-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai
+[total-installs-shield]: https://img.shields.io/vscode-marketplace/d/zhouxianjun.commit-ai.svg?&labelColor=black&style=flat-square
+[avarage-rating-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai
+[avarage-rating-shield]: https://img.shields.io/vscode-marketplace/r/zhouxianjun.commit-ai.svg?color=green&labelColor=black&style=flat-square

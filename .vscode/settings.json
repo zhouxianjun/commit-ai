@@ -8,7 +8,7 @@
     "dist": true
   },
   "typescript.tsc.autoDetect": "off",
-  "cSpell.words": ["Gitmoji", "LITELLM", "tiktoken"],
+  "cSpell.words": ["Gitmoji", "LITELLM", "oxfmt", "tiktoken", "zhouxianjun"],
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true
 }

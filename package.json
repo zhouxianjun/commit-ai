@@ -1,8 +1,8 @@
 {
-  "name": "ai-commit",
-  "displayName": "AI Commit",
-  "version": "0.1.1",
-  "description": "Use Azure/OpenAI API to review Git changes, generate conventional commit messages that meet the conventions, simplify the commit process, and keep the commit conventions consistent.",
+  "name": "commit-ai",
+  "displayName": "CommitAI",
+  "version": "0.0.1",
+  "description": "An AI-powered VS Code extension to generate Conventional Commit messages. Features multi-engine support (OpenAI, Azure, Gemini, DeepSeek), high-reliability failover, and accurate real-time token tracking.",
   "categories": [
     "Other"
   ],
@@ -13,6 +13,7 @@
     "ChatGPT",
     "Commit Message",
     "Commit Message Generator",
+    "CommitAI",
     "Commitizen",
     "Conventional Commits",
     "Git Commit",
@@ -20,8 +21,8 @@
     "OpenAI"
   ],
   "license": "MIT",
-  "repository": "https://github.com/sitoi/ai-commit",
-  "publisher": "sitoi",
+  "repository": "https://github.com/zhouxianjun/ai-commit",
+  "publisher": "zhouxianjun",
   "main": "./dist/extension.js",
   "scripts": {
     "build": "tsdown --minify",
@@ -73,17 +74,17 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.ai-commit",
+        "command": "extension.commit-ai",
         "icon": {
-          "dark": "images/icon.svg",
-          "light": "images/icon.svg"
+          "dark": "images/icon.png",
+          "light": "images/icon.png"
         },
-        "title": "AI Commit"
+        "title": "CommitAI"
       }
     ],
     "configuration": {
       "properties": {
-        "ai-commit.AI_COMMIT_LANGUAGE": {
+        "commit-ai.AI_COMMIT_LANGUAGE": {
           "default": "English",
           "description": "Commit message language",
           "enum": [
@@ -130,12 +131,12 @@
           ],
           "type": "string"
         },
-        "ai-commit.AI_COMMIT_SYSTEM_PROMPT": {
+        "commit-ai.AI_COMMIT_SYSTEM_PROMPT": {
           "type": "string",
           "default": "",
           "description": "Custom system prompt for generating commit messages"
         },
-        "ai-commit.servers": {
+        "commit-ai.servers": {
           "type": "array",
           "default": [],
           "description": "AI server configurations. Each entry defines a provider with its API credentials and available models. Servers are tried in order; on failure the next server is used automatically.",
@@ -223,26 +224,26 @@
             }
           }
         },
-        "ai-commit.timeout": {
+        "commit-ai.timeout": {
           "type": "number",
           "default": 60000,
           "minimum": 1000,
           "description": "Global default timeout in ms. Used when a server does not specify its own timeout."
         },
-        "ai-commit.temperature": {
+        "commit-ai.temperature": {
           "type": "number",
           "default": 0.7,
           "minimum": 0,
           "maximum": 2,
           "description": "Global default temperature (0-2). Used when a model does not specify its own temperature."
         },
-        "ai-commit.maxTokens": {
+        "commit-ai.maxTokens": {
           "type": "number",
           "default": 0,
           "minimum": 0,
           "description": "Global default max output tokens (0 = no limit). Used when a model does not specify its own."
         },
-        "ai-commit.reasoningEffort": {
+        "commit-ai.reasoningEffort": {
           "type": "string",
           "enum": [
             "none",
@@ -255,12 +256,12 @@
           "default": "none",
           "description": "Global default reasoning effort for OpenAI reasoning models (o1/o3). 'none' = no reasoning tokens."
         },
-        "ai-commit.USE_GITMOJI": {
+        "commit-ai.USE_GITMOJI": {
           "type": "boolean",
           "default": true,
           "description": "Whether to use gitmoji in commit messages. When true, uses prompt/with_gitmoji.md; when false, uses prompt/without_gitmoji.md."
         },
-        "ai-commit.TOKEN_COUNT_MODE": {
+        "commit-ai.TOKEN_COUNT_MODE": {
           "type": "string",
           "enum": [
             "fast",
@@ -269,18 +270,18 @@
           "default": "fast",
           "description": "Token counting mode. 'fast' uses character-based estimation (instant, no dependencies). 'accurate' uses tiktoken for precise counting (slightly slower, requires tiktoken dependency)."
         },
-        "ai-commit.SHOW_TOKEN_COUNT": {
+        "commit-ai.SHOW_TOKEN_COUNT": {
           "type": "boolean",
           "default": true,
           "description": "Whether to show token count in the status bar."
         }
       },
-      "title": "AI Commit"
+      "title": "CommitAI"
     },
     "menus": {
       "scm/title": [
         {
-          "command": "extension.ai-commit",
+          "command": "extension.commit-ai",
           "group": "navigation"
         }
       ]
