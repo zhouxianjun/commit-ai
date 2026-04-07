@@ -54,7 +54,7 @@ export class PromptService {
   }
 }
 
-const PROMPT_DIR = path.join(__dirname, '../../', 'prompt');
+const PROMPT_DIR = path.join(__dirname, './', 'prompt');
 
 function loadPromptTemplate(fileName: string): string {
   const filePath = path.join(PROMPT_DIR, fileName);
