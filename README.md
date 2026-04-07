@@ -2,13 +2,13 @@
 
 <div align="center">
 
-<img height="120" src="https://github.com/zhouxianjun/ai-commit/blob/main/images/logo.png?raw=true">
+<img height="120" src="https://github.com/zhouxianjun/commit-ai/blob/main/images/logo.png?raw=true">
 
 <h1>CommitAI</h1>
 
 An AI-powered VS Code extension to generate high-reliability, multi-engine Conventional Commit messages.
 
-**English** · [简体中文](./README.zh_CN.md) · [Report Bug](https://github.com/zhouxianjun/ai-commit/issues) · [Request Feature](https://github.com/zhouxianjun/ai-commit/issues)
+**English** · [简体中文](./README.zh_CN.md) · [Report Bug](https://github.com/zhouxianjun/commit-ai/issues) · [Request Feature](https://github.com/zhouxianjun/commit-ai/issues)
 
 <!-- SHIELD GROUP -->
 
@@ -21,7 +21,7 @@ An AI-powered VS Code extension to generate high-reliability, multi-engine Conve
 [![][avarage-rating-shield]][avarage-rating-link]
 [![][github-license-shield]][github-license-link]
 
-![](https://github.com/zhouxianjun/ai-commit/blob/main/aicommit.gif?raw=true)
+![](https://github.com/zhouxianjun/commit-ai/blob/main/aicommit.gif?raw=true)
 
 </div>
 
@@ -89,16 +89,16 @@ We recommend binding a custom shortcut to the `extension.commit-ai` command in y
 
 <!-- LINK GROUP -->
 
-[github-contributors-link]: https://github.com/zhouxianjun/ai-commit/graphs/contributors
-[github-contributors-shield]: https://img.shields.io/github/contributors/zhouxianjun/ai-commit?color=c4f042&labelColor=black&style=flat-square
-[github-forks-link]: https://github.com/zhouxianjun/ai-commit/network/members
-[github-forks-shield]: https://img.shields.io/github/forks/zhouxianjun/ai-commit?color=8ae8ff&labelColor=black&style=flat-square
-[github-issues-link]: https://github.com/zhouxianjun/ai-commit/issues
-[github-issues-shield]: https://img.shields.io/github/issues/zhouxianjun/ai-commit?color=ff80eb&labelColor=black&style=flat-square
-[github-license-link]: https://github.com/zhouxianjun/ai-commit/blob/main/LICENSE
-[github-license-shield]: https://img.shields.io/github/license/zhouxianjun/ai-commit?color=white&labelColor=black&style=flat-square
-[github-stars-link]: https://github.com/zhouxianjun/ai-commit/network/stargazers
-[github-stars-shield]: https://img.shields.io/github/stars/zhouxianjun/ai-commit?color=ffcb47&labelColor=black&style=flat-square
+[github-contributors-link]: https://github.com/zhouxianjun/commit-ai/graphs/contributors
+[github-contributors-shield]: https://img.shields.io/github/contributors/zhouxianjun/commit-ai?color=c4f042&labelColor=black&style=flat-square
+[github-forks-link]: https://github.com/zhouxianjun/commit-ai/network/members
+[github-forks-shield]: https://img.shields.io/github/forks/zhouxianjun/commit-ai?color=8ae8ff&labelColor=black&style=flat-square
+[github-issues-link]: https://github.com/zhouxianjun/commit-ai/issues
+[github-issues-shield]: https://img.shields.io/github/issues/zhouxianjun/commit-ai?color=ff80eb&labelColor=black&style=flat-square
+[github-license-link]: https://github.com/zhouxianjun/commit-ai/blob/main/LICENSE
+[github-license-shield]: https://img.shields.io/github/license/zhouxianjun/commit-ai?color=white&labelColor=black&style=flat-square
+[github-stars-link]: https://github.com/zhouxianjun/commit-ai/network/stargazers
+[github-stars-shield]: https://img.shields.io/github/stars/zhouxianjun/commit-ai?color=ffcb47&labelColor=black&style=flat-square
 [vscode-marketplace-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai
 [vscode-marketplace-shield]: https://img.shields.io/vscode-marketplace/v/zhouxianjun.commit-ai.svg?label=vscode%20marketplace&color=blue&labelColor=black&style=flat-square
 [total-installs-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai

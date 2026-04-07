@@ -21,7 +21,7 @@
     "OpenAI"
   ],
   "license": "MIT",
-  "repository": "https://github.com/zhouxianjun/ai-commit",
+  "repository": "https://github.com/zhouxianjun/commit-ai",
   "publisher": "zhouxianjun",
   "main": "./dist/extension.js",
   "scripts": {
@@ -76,8 +76,8 @@
       {
         "command": "extension.commit-ai",
         "icon": {
-          "dark": "images/icon.png",
-          "light": "images/icon.png"
+          "dark": "images/icon-dark.svg",
+          "light": "images/icon-light.svg"
         },
         "title": "CommitAI"
       }

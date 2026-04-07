@@ -2,13 +2,13 @@
 
 <div align="center">
 
-<img height="120" src="https://github.com/zhouxianjun/ai-commit/blob/main/images/logo.png?raw=true">
+<img height="120" src="https://github.com/zhouxianjun/commit-ai/blob/main/images/logo.png?raw=true">
 
 <h1>CommitAI</h1>
 
 基于 AI 的 VS Code 自动化提交助手。支持多引擎、高可靠的 Conventional Commit 消息生成。
 
-[English](./README.md) · **简体中文** · [报告问题](https://github.com/zhouxianjun/ai-commit/issues) · [请求功能](https://github.com/zhouxianjun/ai-commit/issues)
+[English](./README.md) · **简体中文** · [报告问题](https://github.com/zhouxianjun/commit-ai/issues) · [请求功能](https://github.com/zhouxianjun/commit-ai/issues)
 
 <!-- SHIELD GROUP -->
 
@@ -21,7 +21,7 @@
 [![][avarage-rating-shield]][avarage-rating-link]
 [![][github-license-shield]][github-license-link]
 
-![](https://github.com/zhouxianjun/ai-commit/blob/main/aicommit.gif?raw=true)
+![](https://github.com/zhouxianjun/commit-ai/blob/main/aicommit.gif?raw=true)
 
 </div>
 
@@ -68,13 +68,13 @@
 
 ## ⚙️ 详细配置项
 
-| 配置名称 | 类型 | 默认值 | 描述 |
-| :--- | :---: | :---: | :--- |
-| `commit-ai.servers` | Array | `[]` | 配置多组 AI 引擎，支持 OpenAI, Azure, Gemini 等。 |
-| `commit-ai.AI_COMMIT_LANGUAGE` | String | `English` | 设置提交信息的语言（已预设 19 种选项）。 |
-| `commit-ai.USE_GITMOJI` | Boolean | `true` | 是否在消息前缀添加 Gitmoji（如 ✨, 🐛）。 |
-| `commit-ai.TOKEN_COUNT_MODE` | Enum | `fast` | `fast` 为快速估算，`accurate` 使用 tiktoken 进行精确计算。 |
-| `commit-ai.SHOW_TOKEN_COUNT` | Boolean | `true` | 是否在底部状态栏显示当前暂存内容的 Token 预估。 |
+| 配置名称                       |  类型   |  默认值   | 描述                                                       |
+| :----------------------------- | :-----: | :-------: | :--------------------------------------------------------- |
+| `commit-ai.servers`            |  Array  |   `[]`    | 配置多组 AI 引擎，支持 OpenAI, Azure, Gemini 等。          |
+| `commit-ai.AI_COMMIT_LANGUAGE` | String  | `English` | 设置提交信息的语言（已预设 19 种选项）。                   |
+| `commit-ai.USE_GITMOJI`        | Boolean |  `true`   | 是否在消息前缀添加 Gitmoji（如 ✨, 🐛）。                  |
+| `commit-ai.TOKEN_COUNT_MODE`   |  Enum   |  `fast`   | `fast` 为快速估算，`accurate` 使用 tiktoken 进行精确计算。 |
+| `commit-ai.SHOW_TOKEN_COUNT`   | Boolean |  `true`   | 是否在底部状态栏显示当前暂存内容的 Token 预估。            |
 
 ## 键盘快捷键 (推荐自定义)
 
@@ -88,16 +88,17 @@
 ---
 
 <!-- LINK GROUP -->
-[github-contributors-link]: https://github.com/zhouxianjun/ai-commit/graphs/contributors
-[github-contributors-shield]: https://img.shields.io/github/contributors/zhouxianjun/ai-commit?color=c4f042&labelColor=black&style=flat-square
-[github-forks-link]: https://github.com/zhouxianjun/ai-commit/network/members
-[github-forks-shield]: https://img.shields.io/github/forks/zhouxianjun/ai-commit?color=8ae8ff&labelColor=black&style=flat-square
-[github-issues-link]: https://github.com/zhouxianjun/ai-commit/issues
-[github-issues-shield]: https://img.shields.io/github/issues/zhouxianjun/ai-commit?color=ff80eb&labelColor=black&style=flat-square
-[github-license-link]: https://github.com/zhouxianjun/ai-commit/blob/main/LICENSE
-[github-license-shield]: https://img.shields.io/github/license/zhouxianjun/ai-commit?color=white&labelColor=black&style=flat-square
-[github-stars-link]: https://github.com/zhouxianjun/ai-commit/network/stargazers
-[github-stars-shield]: https://img.shields.io/github/stars/zhouxianjun/ai-commit?color=ffcb47&labelColor=black&style=flat-square
+
+[github-contributors-link]: https://github.com/zhouxianjun/commit-ai/graphs/contributors
+[github-contributors-shield]: https://img.shields.io/github/contributors/zhouxianjun/commit-ai?color=c4f042&labelColor=black&style=flat-square
+[github-forks-link]: https://github.com/zhouxianjun/commit-ai/network/members
+[github-forks-shield]: https://img.shields.io/github/forks/zhouxianjun/commit-ai?color=8ae8ff&labelColor=black&style=flat-square
+[github-issues-link]: https://github.com/zhouxianjun/commit-ai/issues
+[github-issues-shield]: https://img.shields.io/github/issues/zhouxianjun/commit-ai?color=ff80eb&labelColor=black&style=flat-square
+[github-license-link]: https://github.com/zhouxianjun/commit-ai/blob/main/LICENSE
+[github-license-shield]: https://img.shields.io/github/license/zhouxianjun/commit-ai?color=white&labelColor=black&style=flat-square
+[github-stars-link]: https://github.com/zhouxianjun/commit-ai/network/stargazers
+[github-stars-shield]: https://img.shields.io/github/stars/zhouxianjun/commit-ai?color=ffcb47&labelColor=black&style=flat-square
 [vscode-marketplace-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai
 [vscode-marketplace-shield]: https://img.shields.io/vscode-marketplace/v/zhouxianjun.commit-ai.svg?label=vscode%20marketplace&color=blue&labelColor=black&style=flat-square
 [total-installs-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai
