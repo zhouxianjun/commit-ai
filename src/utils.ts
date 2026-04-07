@@ -18,3 +18,5 @@ export class ProgressHandler {
     );
   }
 }
+
+export const zeroToUndefined = (value?: number) => (value === 0 ? undefined : value);

@@ -1,10 +1,30 @@
 import simpleGit from 'simple-git';
 import * as vscode from 'vscode';
+import type { API } from './git';
+
+export interface GitExtension {
+  readonly enabled: boolean;
+  readonly onDidChangeEnablement: vscode.Event<boolean>;
+
+  /**
+   * Returns a specific API version.
+   *
+   * Throws error if git extension is disabled. You can listed to the
+   * [GitExtension.onDidChangeEnablement](#GitExtension.onDidChangeEnablement) event
+   * to know when the extension becomes enabled/disabled.
+   *
+   * @param version Version number.
+   * @returns API instance
+   */
+  getAPI(version: 1): API;
+}
 
 /**
  * Retrieves the staged changes from the Git repository.
  */
-export async function getDiffStaged(repo: any): Promise<{ diff: string; error?: string }> {
+export async function getDiffStaged(
+  repo: any
+): Promise<{ diff: string; error?: string; isEmpty: boolean }> {
   try {
     const rootPath = repo?.rootUri?.fsPath || vscode.workspace.workspaceFolders?.[0].uri.fsPath;
 
@@ -17,10 +37,20 @@ export async function getDiffStaged(repo: any): Promise<{ diff: string; error?: 
 
     return {
       diff: diff || 'No changes staged.',
-      error: null
+      error: null,
+      isEmpty: !diff
     };
   } catch (error) {
     console.error('Error reading Git diff:', error);
-    return { diff: '', error: error.message };
+    return { diff: '', error: error.message, isEmpty: true };
   }
 }
+
+export const getGitApi = () => {
+  return vscode.extensions.getExtension<GitExtension>('vscode.git')?.exports.getAPI(1);
+};
+
+export const getCurrentGitRepository = () => {
+  const api = getGitApi();
+  return api?.repositories[0];
+};

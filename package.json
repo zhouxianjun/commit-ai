@@ -34,15 +34,21 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "publish": "vsce publish --no-dependencies",
     "test": "node ./out/test/runTest.js",
+    "update-model-context": "node scripts/update-model-context.js",
     "vscode:prepublish": "npm run build",
     "watch": "tsdown --watch",
     "watch-tests": "tsc -p . -w --outDir out"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@types/lodash-es": "^4.17.12",
     "fs-extra": "^11.0.4",
+    "inversify": "^8.1.0",
+    "lodash-es": "^4.18.1",
     "openai": "^6.33.0",
-    "simple-git": "^3.17.0"
+    "reflect-metadata": "^0.2.2",
+    "simple-git": "^3.17.0",
+    "tiktoken": "^1.0.21"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
@@ -190,6 +196,12 @@
                       "default": 0,
                       "description": "Per-model max output tokens (0 = no limit, overrides global maxTokens)"
                     },
+                    "maxInputTokens": {
+                      "type": "number",
+                      "minimum": 0,
+                      "default": 0,
+                      "description": "Per-model max input tokens (0 = auto-detect from model name)"
+                    },
                     "reasoningEffort": {
                       "type": "string",
                       "enum": [
@@ -247,6 +259,20 @@
           "type": "boolean",
           "default": true,
           "description": "Whether to use gitmoji in commit messages. When true, uses prompt/with_gitmoji.md; when false, uses prompt/without_gitmoji.md."
+        },
+        "ai-commit.TOKEN_COUNT_MODE": {
+          "type": "string",
+          "enum": [
+            "fast",
+            "accurate"
+          ],
+          "default": "fast",
+          "description": "Token counting mode. 'fast' uses character-based estimation (instant, no dependencies). 'accurate' uses tiktoken for precise counting (slightly slower, requires tiktoken dependency)."
+        },
+        "ai-commit.SHOW_TOKEN_COUNT": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to show token count in the status bar."
         }
       },
       "title": "AI Commit"
@@ -261,7 +287,8 @@
     }
   },
   "activationEvents": [
-    "onCommand:ai-commit"
+    "onCommand:ai-commit",
+    "onStartupFinished"
   ],
   "icon": "images/logo.png",
   "engines": {

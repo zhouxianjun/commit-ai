@@ -1,21 +1,4 @@
-import type { ReasoningEffort } from 'openai/resources';
-
-export interface ModelConfig {
-  name: string;
-  temperature?: number;
-  maxTokens?: number;
-  reasoningEffort?: ReasoningEffort;
-  options?: Record<string, unknown>;
-}
-
-export interface ServerConfig {
-  type: 'openai' | 'gemini' | 'azure';
-  baseURL?: string;
-  apiKey: string;
-  apiVersion?: string;
-  timeout?: number;
-  models: ModelConfig[];
-}
+import type { ModelConfig } from '../service/llm-server-service';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';

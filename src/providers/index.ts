@@ -1,6 +1,7 @@
-import { AIProvider, ServerConfig } from './types';
+import { AIProvider } from './types';
 import { OpenAIProvider } from './openai-provider';
 import { GeminiProvider } from './gemini-provider';
+import type { ServerConfig } from '../service/llm-server-service';
 
 export function createProvider(config: ServerConfig): AIProvider {
   switch (config.type) {
@@ -14,4 +15,4 @@ export function createProvider(config: ServerConfig): AIProvider {
   }
 }
 
-export type { AIProvider, ServerConfig, ModelConfig, ChatMessage } from './types';
+export type { AIProvider, ChatMessage } from './types';

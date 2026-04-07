@@ -1,12 +1,10 @@
 import { GoogleGenerativeAI, GenerateContentResult } from '@google/generative-ai';
-import { AIProvider, ChatMessage, ModelConfig, ServerConfig } from './types';
+import { AIProvider, ChatMessage } from './types';
+import type { ModelConfig, ServerConfig } from '../service/llm-server-service';
 
 export class GeminiProvider implements AIProvider<GenerateContentResult> {
   readonly type = 'gemini';
   private client: GoogleGenerativeAI;
-
-  beforeChatCompletion?: (messages: ChatMessage[], modelConfig: ModelConfig) => ChatMessage[];
-  afterChatCompletion?: (response: GenerateContentResult, modelConfig: ModelConfig) => void;
 
   constructor(private config: ServerConfig) {
     this.client = new GoogleGenerativeAI(config.apiKey);
