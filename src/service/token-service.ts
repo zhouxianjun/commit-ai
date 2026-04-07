@@ -155,7 +155,10 @@ export class TokenService implements vscode.Disposable {
     this.notifyListeners();
   }
   private getStatus(usagePercent: number | undefined): TokenState['status'] {
-    return usagePercent && usagePercent > 100
+    if (!usagePercent) {
+      return 'idle';
+    }
+    return usagePercent < 100
       ? 'exceeded'
       : usagePercent > 90
         ? 'warning'
