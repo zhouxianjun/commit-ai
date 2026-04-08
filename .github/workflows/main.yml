@@ -26,10 +26,10 @@ jobs:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
           noVerify: true
           dependencies: false
-      - name: Publish to Visual Studio Marketplace
-        uses: HaaLeo/publish-vscode-extension@v2
-        with:
-          pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
-          registryUrl: https://marketplace.visualstudio.com
-          noVerify: true
-          dependencies: false
+      # - name: Publish to Visual Studio Marketplace
+      #   uses: HaaLeo/publish-vscode-extension@v2
+      #   with:
+      #     pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
+      #     registryUrl: https://marketplace.visualstudio.com
+      #     noVerify: true
+      #     dependencies: false
