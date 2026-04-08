@@ -22,7 +22,7 @@
   ],
   "license": "MIT",
   "repository": "https://github.com/zhouxianjun/commit-ai",
-  "publisher": "zhouxianjun",
+  "publisher": "alone",
   "main": "./dist/extension.js",
   "scripts": {
     "build": "tsdown --minify",
