@@ -10,8 +10,18 @@ export default defineConfig({
   clean: true,
   shims: true,
   deps: {
+    alwaysBundle: [
+      /\@google\/generative-ai/,
+      /fs-extra/,
+      /inversify/,
+      /lodash-es/,
+      /openai/,
+      /reflect-metadata/,
+      /simple-git/,
+      /tiktoken/
+    ],
     neverBundle: ['vscode']
   },
-  copy: ['prompt'],
+  copy: ['prompt', 'node_modules/tiktoken/*.wasm'],
   outExtensions: () => ({ js: '.js', map: '.map' })
 });

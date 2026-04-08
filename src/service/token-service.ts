@@ -158,7 +158,7 @@ export class TokenService implements vscode.Disposable {
     if (!usagePercent) {
       return 'idle';
     }
-    return usagePercent < 100
+    return usagePercent > 100
       ? 'exceeded'
       : usagePercent > 90
         ? 'warning'
