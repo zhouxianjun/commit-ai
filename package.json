@@ -34,7 +34,7 @@
     "publish": "vsce publish --no-dependencies",
     "release": "node scripts/release.js",
     "update-model-context": "node scripts/update-model-context.js",
-    "vscode:prepublish": "npm run build",
+    "vscode:prepublish": "pnpm run build",
     "watch": "tsdown --watch"
   },
   "dependencies": {
