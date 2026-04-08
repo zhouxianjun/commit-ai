@@ -27,18 +27,15 @@
   "scripts": {
     "build": "tsdown --minify",
     "compile": "tsdown",
-    "compile-tests": "tsc -p . --outDir out",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "eslint src --ext ts",
     "package": "vsce package --no-dependencies",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "publish": "vsce publish --no-dependencies",
-    "test": "node ./out/test/runTest.js",
+    "release": "node scripts/release.js",
     "update-model-context": "node scripts/update-model-context.js",
     "vscode:prepublish": "npm run build",
-    "watch": "tsdown --watch",
-    "watch-tests": "tsc -p . -w --outDir out"
+    "watch": "tsdown --watch"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
