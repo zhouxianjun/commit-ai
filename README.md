@@ -16,7 +16,7 @@ An AI-powered VS Code extension to generate high-reliability, multi-engine Conve
 [![][github-forks-shield]][github-forks-link]
 [![][github-stars-shield]][github-stars-link]
 [![][github-issues-shield]][github-issues-link]
-[![][vscode-marketplace-shield]][vscode-marketplace-link]
+[![][open-vsx-marketplace-shield]][open-vsx-marketplace-link]
 [![][total-installs-shield]][total-installs-link]
 [![][avarage-rating-shield]][avarage-rating-link]
 [![][github-license-shield]][github-license-link]
@@ -99,9 +99,9 @@ We recommend binding a custom shortcut to the `extension.commit-ai` command in y
 [github-license-shield]: https://img.shields.io/github/license/zhouxianjun/commit-ai?color=white&labelColor=black&style=flat-square
 [github-stars-link]: https://github.com/zhouxianjun/commit-ai/network/stargazers
 [github-stars-shield]: https://img.shields.io/github/stars/zhouxianjun/commit-ai?color=ffcb47&labelColor=black&style=flat-square
-[vscode-marketplace-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai
-[vscode-marketplace-shield]: https://img.shields.io/vscode-marketplace/v/zhouxianjun.commit-ai.svg?label=vscode%20marketplace&color=blue&labelColor=black&style=flat-square
-[total-installs-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai
-[total-installs-shield]: https://img.shields.io/vscode-marketplace/d/zhouxianjun.commit-ai.svg?&labelColor=black&style=flat-square
-[avarage-rating-link]: https://marketplace.visualstudio.com/items?itemName=zhouxianjun.commit-ai
-[avarage-rating-shield]: https://img.shields.io/vscode-marketplace/r/zhouxianjun.commit-ai.svg?color=green&labelColor=black&style=flat-square
+[open-vsx-marketplace-link]: https://open-vsx.org/extension/alone/commit-ai
+[open-vsx-marketplace-shield]: https://img.shields.io/open-vsx/v/alone/commit-ai.svg?label=open-vsx&color=blue&labelColor=black&style=flat-square
+[total-installs-link]: https://open-vsx.org/extension/alone/commit-ai
+[total-installs-shield]: https://img.shields.io/open-vsx/dt/alone/commit-ai?&labelColor=black&style=flat-square
+[avarage-rating-link]: https://open-vsx.org/extension/alone/commit-ai
+[avarage-rating-shield]: https://img.shields.io/open-vsx/rating/alone/commit-ai?color=green&labelColor=black&style=flat-square
