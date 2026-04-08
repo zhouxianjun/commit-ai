@@ -294,5 +294,8 @@
   "engines": {
     "node": ">=16",
     "vscode": "^1.77.0"
-  }
+  },
+  "extensionDependencies": [
+    "vscode.git"
+  ]
 }

@@ -47,7 +47,21 @@ export async function getDiffStaged(
 }
 
 export const getGitApi = () => {
-  return vscode.extensions.getExtension<GitExtension>('vscode.git')?.exports.getAPI(1);
+  try {
+    const extension = vscode.extensions.getExtension<GitExtension>('vscode.git');
+    if (!extension) {
+      return undefined;
+    }
+
+    if (!extension.isActive) {
+      return undefined;
+    }
+
+    return extension.exports.getAPI(1);
+  } catch (error) {
+    console.error('Failed to get Git API:', error);
+    return undefined;
+  }
 };
 
 export const getCurrentGitRepository = () => {

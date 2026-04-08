@@ -7,6 +7,10 @@ import { initContainer } from './service';
  */
 export async function activate(context: vscode.ExtensionContext) {
   try {
+    const gitExtension = vscode.extensions.getExtension('vscode.git');
+    if (gitExtension && !gitExtension.isActive) {
+      await gitExtension.activate();
+    }
     initContainer(context);
   } catch (error) {
     console.error('Failed to activate extension:', error);
