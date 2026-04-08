@@ -6,6 +6,7 @@ import { zeroToUndefined } from '../utils/utils';
 
 export interface ModelConfig {
   name: string;
+  enabled?: boolean;
   temperature?: number;
   maxTokens?: number;
   maxInputTokens?: number;
@@ -64,23 +65,25 @@ export class LLMServerService implements vscode.Disposable {
     );
 
     this.servers = configs.flatMap((config) => {
-      return config.models.map((model) => {
-        return {
-          config: {
-            ...config,
-            timeout: config.timeout ?? globalTimeout
-          },
-          model: {
-            ...model,
-            temperature: model.temperature ?? globalTemperature,
-            maxTokens: zeroToUndefined(model.maxTokens) ?? zeroToUndefined(globalMaxTokens),
-            maxInputTokens:
-              zeroToUndefined(model.maxInputTokens) ?? zeroToUndefined(globalMaxInputTokens),
-            reasoningEffort: model.reasoningEffort ?? globalReasoningEffort
-          },
-          label: `${config.type}:${model.name} (${config.baseURL || 'default'})`
-        };
-      });
+      return config.models
+        .filter((m) => m.enabled !== false)
+        .map((model) => {
+          return {
+            config: {
+              ...config,
+              timeout: config.timeout ?? globalTimeout
+            },
+            model: {
+              ...model,
+              temperature: model.temperature ?? globalTemperature,
+              maxTokens: zeroToUndefined(model.maxTokens) ?? zeroToUndefined(globalMaxTokens),
+              maxInputTokens:
+                zeroToUndefined(model.maxInputTokens) ?? zeroToUndefined(globalMaxInputTokens),
+              reasoningEffort: model.reasoningEffort ?? globalReasoningEffort
+            },
+            label: `${config.type}:${model.name} (${config.baseURL || 'default'})`
+          };
+        });
     });
   }
 

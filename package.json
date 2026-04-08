@@ -150,6 +150,7 @@
             "properties": {
               "type": {
                 "type": "string",
+                "default": "openai",
                 "enum": [
                   "openai",
                   "gemini",
@@ -184,6 +185,11 @@
                     "name": {
                       "type": "string",
                       "description": "Model name"
+                    },
+                    "enabled": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Enable this model"
                     },
                     "temperature": {
                       "type": "number",
@@ -290,12 +296,12 @@
   "activationEvents": [
     "onStartupFinished"
   ],
+  "extensionDependencies": [
+    "vscode.git"
+  ],
   "icon": "images/logo.png",
   "engines": {
     "node": ">=16",
     "vscode": "^1.77.0"
-  },
-  "extensionDependencies": [
-    "vscode.git"
-  ]
+  }
 }

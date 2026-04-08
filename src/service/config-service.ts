@@ -11,6 +11,7 @@ export enum ConfigKeys {
   MAX_TOKENS = 'maxTokens',
   MAX_INPUT_TOKENS = 'maxInputTokens',
   REASONING_EFFORT = 'reasoningEffort',
+  MODEL_ENABLED = 'enabled',
 
   AI_COMMIT_LANGUAGE = 'AI_COMMIT_LANGUAGE',
   SYSTEM_PROMPT = 'AI_COMMIT_SYSTEM_PROMPT',
