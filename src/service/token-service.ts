@@ -43,9 +43,7 @@ export class TokenService implements vscode.Disposable {
   ) {
     this.scheduleUpdate = debounce(this.updateTokenCount.bind(this), 500);
     this.disposables.push(
-      vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration(ConfigKeys.TOKEN_COUNT_MODE)) {
-        }
+      vscode.workspace.onDidChangeConfiguration(() => {
         this.scheduleUpdate();
       })
     );
@@ -76,7 +74,8 @@ export class TokenService implements vscode.Disposable {
       throw new Error('No model configured');
     }
     const model = servers[0].model;
-    const limit = this.modelContextService.getContextWindowLimit(model.name);
+    const limit =
+      this.modelContextService.getContextWindowLimit(model.name) ?? model.maxInputTokens;
     const tokenCountMode = this.configService.getConfig<TokenCountMode>(
       ConfigKeys.TOKEN_COUNT_MODE
     );
@@ -147,24 +146,28 @@ export class TokenService implements vscode.Disposable {
     if (isNil(newState.usagePercent) && newState.limit) {
       newState.usagePercent = (newState.tokens / newState.limit) * 100;
     }
-    if (['idle', 'analyzing'].includes(newState.status)) {
-      newState.status = this.getStatus(newState.usagePercent);
+    if (!state.status) {
+      newState.status = this.getStatus(newState);
     }
 
     this._state = newState;
     this.notifyListeners();
   }
-  private getStatus(usagePercent: number | undefined): TokenState['status'] {
-    if (!usagePercent) {
+  private getStatus(state: TokenState): TokenState['status'] {
+    const { usagePercent, tokens } = state;
+    if (!tokens) {
       return 'idle';
     }
-    return usagePercent > 100
-      ? 'exceeded'
-      : usagePercent > 90
-        ? 'warning'
-        : usagePercent > 70
-          ? 'caution'
-          : 'ok';
+    if (usagePercent >= 100) {
+      return 'exceeded';
+    }
+    if (usagePercent >= 90) {
+      return 'warning';
+    }
+    if (usagePercent >= 70) {
+      return 'caution';
+    }
+    return 'ok';
   }
 
   dispose() {

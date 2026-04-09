@@ -54,11 +54,8 @@ export class LLMServerService implements vscode.Disposable {
     const configs = this.configService.getConfig<ServerConfig[]>(ConfigKeys.SERVERS, []);
     const globalTimeout = this.configService.getConfig<number>(ConfigKeys.TIMEOUT, 60000);
     const globalTemperature = this.configService.getConfig<number>(ConfigKeys.TEMPERATURE, 0.7);
-    const globalMaxTokens = this.configService.getConfig<number>(ConfigKeys.MAX_TOKENS, 2048);
-    const globalMaxInputTokens = this.configService.getConfig<number>(
-      ConfigKeys.MAX_INPUT_TOKENS,
-      2048
-    );
+    const globalMaxTokens = this.configService.getConfig<number>(ConfigKeys.MAX_TOKENS);
+    const globalMaxInputTokens = this.configService.getConfig<number>(ConfigKeys.MAX_INPUT_TOKENS);
     const globalReasoningEffort = this.configService.getConfig<ReasoningEffort>(
       ConfigKeys.REASONING_EFFORT,
       'low'
