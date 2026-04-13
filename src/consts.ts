@@ -1,8 +1,9 @@
 import type { ServiceIdentifier } from 'inversify';
 import * as vscode from 'vscode';
-import { name } from '../package.json';
+import { name, displayName } from '../package.json';
 
 export const NAME = name;
+export const DISPLAY_NAME = displayName;
 export const Context: ServiceIdentifier<vscode.ExtensionContext> = Symbol('Context');
 export const BASIC_COMMAND = `extension.${NAME}`;
 export const Commands = {

@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { DISPLAY_NAME } from '../consts';
 
 /**
  * Adds progress handling functionality.
@@ -11,7 +12,7 @@ export class ProgressHandler {
     return vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Notification,
-        title: `[AI Commit] ${title}`,
+        title: `[${DISPLAY_NAME}] ${title}`,
         cancellable: true
       },
       task

@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { LLMServerService } from './llm-server-service';
 import { createProvider, type ChatMessage } from '../providers';
-import { NAME } from '../consts';
+import { NAME, DISPLAY_NAME } from '../consts';
 
 @injectable()
 export class ProviderService {
@@ -53,7 +53,7 @@ export class ProviderService {
         }
 
         const errorMsg = err instanceof Error ? err.message : String(err);
-        console.error(`[AI Commit] Error from ${server.label}:`, {
+        console.error(`[${DISPLAY_NAME}] Error from ${server.label}:`, {
           error: errorMsg,
           rawResponse
         });
