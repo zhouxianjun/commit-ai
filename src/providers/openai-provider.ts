@@ -58,7 +58,10 @@ export class OpenAIProvider implements AIProvider<ChatCompletion> {
       Object.assign(requestParams, modelConfig.options);
     }
 
-    return this.client.chat.completions.create(requestParams, { signal });
+    return this.client.chat.completions.create(requestParams, {
+      signal,
+      timeout: this.config.timeout
+    });
   }
 
   extractText(response: ChatCompletion): string {

@@ -7,7 +7,7 @@ import { NAME } from '../consts';
 export class ProviderService {
   constructor(@inject(LLMServerService) private llmServerService: LLMServerService) {}
 
-  async chatCompletion(messages: ChatMessage[]): Promise<string> {
+  async chatCompletion(messages: ChatMessage[], signal?: AbortSignal): Promise<string> {
     const servers = this.buildServerProvider();
     if (servers.length === 0) {
       throw new Error(
@@ -19,10 +19,13 @@ export class ProviderService {
 
     for (const server of servers) {
       let rawResponse: unknown;
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), server.timeout);
+      // Per-server abort: combines external signal + per-server timeout
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), server.timeout);
+      const onExternalAbort = () => controller.abort();
+      signal?.addEventListener('abort', onExternalAbort, { once: true });
 
+      try {
         const processMessages =
           server.provider.beforeChatCompletion?.(messages, server.modelConfig) ?? messages;
         rawResponse = await server.provider.chatCompletion(
@@ -36,12 +39,27 @@ export class ProviderService {
         console.info(`use [${server.label}] success`);
         return server.provider.extractText(rawResponse);
       } catch (err) {
+        clearTimeout(timer);
+
+        // If the external signal triggered the abort, stop everything immediately
+        if (signal?.aborted) {
+          throw err;
+        }
+
+        // Per-server timeout: try the next server
+        if (controller.signal.aborted) {
+          errors.push(`[${server.label}] Request timeout`);
+          continue;
+        }
+
         const errorMsg = err instanceof Error ? err.message : String(err);
         console.error(`[AI Commit] Error from ${server.label}:`, {
           error: errorMsg,
           rawResponse
         });
         errors.push(`[${server.label}] ${errorMsg}`);
+      } finally {
+        signal?.removeEventListener('abort', onExternalAbort);
       }
     }
 

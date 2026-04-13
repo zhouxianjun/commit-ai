@@ -47,12 +47,12 @@ export class GeminiProvider implements AIProvider<GenerateContentResult> {
   private withAbort<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       if (signal.aborted) {
-        reject(new Error('Request aborted'));
+        reject(signal.reason);
         return;
       }
 
       const onAbort = () => {
-        reject(new Error('Request timeout'));
+        reject(signal.reason);
       };
       signal.addEventListener('abort', onAbort, { once: true });
 
