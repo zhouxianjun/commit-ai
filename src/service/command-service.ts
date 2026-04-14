@@ -3,13 +3,15 @@ import { NAME } from './config-service';
 import { inject, injectable } from 'inversify';
 import { CommitService } from './commit-service';
 import { Commands, Context } from '../consts';
+import { WebviewService } from './webview-service';
 
 @injectable()
 export class CommandService implements vscode.Disposable {
   private disposables: vscode.Disposable[] = [];
   constructor(
     @inject(Context) private context: vscode.ExtensionContext,
-    @inject(CommitService) private commitService: CommitService
+    @inject(CommitService) private commitService: CommitService,
+    @inject(WebviewService) private webviewService: WebviewService
   ) {
     this.registerCommands();
   }
@@ -18,6 +20,7 @@ export class CommandService implements vscode.Disposable {
     this.registerCommand(Commands.GENERATE_COMMIT, (args) =>
       this.commitService.generateCommitMessage(args)
     );
+    this.registerCommand(Commands.OPEN_SETTINGS, () => this.webviewService.openSettings());
   }
 
   private openSettings() {

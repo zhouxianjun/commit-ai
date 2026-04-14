@@ -8,7 +8,19 @@
     "dist": true
   },
   "typescript.tsc.autoDetect": "off",
-  "cSpell.words": ["Gitmoji", "LITELLM", "oxfmt", "tiktoken", "zhouxianjun"],
+  "cSpell.words": [
+    "Gitmoji",
+    "LITELLM",
+    "lucide",
+    "openrouter",
+    "oxfmt",
+    "tiktoken",
+    "zhouxianjun"
+  ],
   "editor.defaultFormatter": "oxc.oxc-vscode",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "css.customData": [],
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "tailwindCSS.experimental.v4": true
 }

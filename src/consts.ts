@@ -7,6 +7,7 @@ export const DISPLAY_NAME = displayName;
 export const Context: ServiceIdentifier<vscode.ExtensionContext> = Symbol('Context');
 export const BASIC_COMMAND = `extension.${NAME}`;
 export const Commands = {
-  GENERATE_COMMIT: BASIC_COMMAND
+  GENERATE_COMMIT: BASIC_COMMAND,
+  OPEN_SETTINGS: `${BASIC_COMMAND}.settings`
 } as const;
 export type Commands = (typeof Commands)[keyof typeof Commands];

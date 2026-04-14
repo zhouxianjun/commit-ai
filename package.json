@@ -34,12 +34,15 @@
     "publish": "vsce publish --no-dependencies",
     "release": "node scripts/release.js",
     "update-model-context": "node scripts/update-model-context.js",
-    "vscode:prepublish": "pnpm run build",
-    "watch": "tsdown --watch"
+    "vscode:prepublish": "pnpm run build && pnpm run webview:build",
+    "watch": "tsdown --watch",
+    "webview:build": "cd webview-ui && pnpm build",
+    "webview:watch": "cd webview-ui && pnpm dev"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@types/lodash-es": "^4.17.12",
+    "cheerio": "^1.2.0",
     "fs-extra": "^11.0.4",
     "inversify": "^8.1.0",
     "lodash-es": "^4.18.1",
@@ -77,6 +80,10 @@
           "light": "images/icon-light.svg"
         },
         "title": "CommitAI"
+      },
+      {
+        "command": "extension.commit-ai.settings",
+        "title": "CommitAI: AI Server Settings"
       }
     ],
     "configuration": {

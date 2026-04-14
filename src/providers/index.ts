@@ -1,7 +1,7 @@
 import { AIProvider } from './types';
 import { OpenAIProvider } from './openai-provider';
 import { GeminiProvider } from './gemini-provider';
-import type { ServerConfig } from '../service/llm-server-service';
+import type { ServerConfig } from '../../types/shared';
 
 export function createProvider(config: ServerConfig): AIProvider {
   switch (config.type) {

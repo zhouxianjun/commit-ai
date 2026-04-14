@@ -3,25 +3,8 @@ import { ConfigKeys, ConfigService, NAME } from './config-service';
 import type { ReasoningEffort } from 'openai/resources';
 import * as vscode from 'vscode';
 import { zeroToUndefined } from '../utils/utils';
+import type { ModelConfig, ServerConfig } from '../../types/shared';
 
-export interface ModelConfig {
-  name: string;
-  enabled?: boolean;
-  temperature?: number;
-  maxTokens?: number;
-  maxInputTokens?: number;
-  reasoningEffort?: ReasoningEffort;
-  options?: Record<string, unknown>;
-}
-
-export interface ServerConfig {
-  type: 'openai' | 'gemini' | 'azure';
-  baseURL?: string;
-  apiKey: string;
-  apiVersion?: string;
-  timeout?: number;
-  models: ModelConfig[];
-}
 export interface Server {
   config: ServerConfig;
   model: ModelConfig;

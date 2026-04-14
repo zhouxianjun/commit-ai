@@ -41,6 +41,16 @@ export class ConfigService implements vscode.Disposable {
     return this.configCache.get(key);
   }
 
+  async updateConfig<T>(
+    key: string,
+    value: T,
+    target: vscode.ConfigurationTarget = vscode.ConfigurationTarget.Global
+  ): Promise<void> {
+    const config = vscode.workspace.getConfiguration(NAME);
+    await config.update(key, value, target);
+    this.configCache.set(key, value);
+  }
+
   dispose() {
     this.disposable.dispose();
   }

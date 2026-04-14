@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI, GenerateContentResult } from '@google/generative-ai';
 import { AIProvider, ChatMessage } from './types';
-import type { ModelConfig, ServerConfig } from '../service/llm-server-service';
+import type { ModelConfig, ServerConfig } from '../../types/shared';
 
 export class GeminiProvider implements AIProvider<GenerateContentResult> {
   readonly type = 'gemini';

@@ -5,7 +5,7 @@ import {
   ChatCompletionMessageParam
 } from 'openai/resources';
 import { AIProvider, ChatMessage } from './types';
-import type { ModelConfig, ServerConfig } from '../service/llm-server-service';
+import type { ModelConfig, ServerConfig } from '../../types/shared';
 
 export class OpenAIProvider implements AIProvider<ChatCompletion> {
   readonly type = 'openai';

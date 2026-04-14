@@ -19,7 +19,7 @@ async function release() {
 
   // 1. Get the last tag
   let lastTag = run('git describe --tags --abbrev=0');
-  
+
   let logCommand = '';
   if (lastTag) {
     console.log(`📦 Last version found: ${lastTag}`);

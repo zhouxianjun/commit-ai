@@ -10,6 +10,7 @@ import { CommandService } from './command-service';
 import { CommitService } from './commit-service';
 import { PromptService } from './prompt-service';
 import { ProviderService } from './provider-service';
+import { WebviewService } from './webview-service';
 
 export const container = new Container();
 
@@ -22,6 +23,7 @@ const services = [
   StatusBarService,
   ProviderService,
   CommitService,
+  WebviewService,
   CommandService
 ] as const;
 export const initContainer = (context: vscode.ExtensionContext) => {
