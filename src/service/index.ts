@@ -31,7 +31,9 @@ export const initContainer = (context: vscode.ExtensionContext) => {
 
   services.forEach((service) => {
     container.bind<any>(service).toSelf().inSingletonScope();
+  });
 
+  services.forEach((service) => {
     if ('dispose' in service.prototype) {
       context.subscriptions.push(container.get<any>(service));
     }

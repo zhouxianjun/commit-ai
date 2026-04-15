@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable, LazyServiceIdentifier } from 'inversify';
 import * as vscode from 'vscode';
 import { ConfigKeys, ConfigService } from './config-service';
 import { LLMServerService } from './llm-server-service';
@@ -7,6 +7,7 @@ import { calculateTokens, type TokenCountMode } from '../utils/tokens';
 import { getCurrentGitRepository, getGitApi } from '../utils/git-utils';
 import { debounce, isNil, type DebouncedFunc } from 'lodash-es';
 import { PromptService } from './prompt-service';
+import { ProviderService } from './provider-service';
 
 export interface TokenState {
   tokens: number;
@@ -39,7 +40,9 @@ export class TokenService implements vscode.Disposable {
     @inject(ModelContextService)
     private readonly modelContextService: ModelContextService,
     @inject(PromptService)
-    private readonly promptService: PromptService
+    private readonly promptService: PromptService,
+    @inject(new LazyServiceIdentifier(() => ProviderService))
+    private readonly providerService: ProviderService
   ) {
     this.scheduleUpdate = debounce(this.updateTokenCount.bind(this), 500);
     this.disposables.push(
@@ -73,7 +76,7 @@ export class TokenService implements vscode.Disposable {
     if (!servers.length) {
       throw new Error('No model configured');
     }
-    const model = servers[0].model;
+    const model = this.providerService.lastModel ?? servers[0].model;
     const limit =
       this.modelContextService.getContextWindowLimit(model.name) ?? model.maxInputTokens;
     const tokenCountMode = this.configService.getConfig<TokenCountMode>(

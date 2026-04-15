@@ -35,6 +35,7 @@ export class CommitService {
     this.#abortController = abortController;
 
     try {
+      const startTime = Date.now();
       await ProgressHandler.withProgress('', async (progress) => {
         const repo = this.getRepository(arg);
         if (!repo) {
@@ -62,6 +63,11 @@ export class CommitService {
 
         scmInputBox.value = commitMessage.trim();
       });
+
+      const time = Date.now() - startTime;
+      vscode.window.showInformationMessage(
+        `Successfully generated commit message using ${this.providerService.lastModel?.name} in ${time}ms`
+      );
     } catch (err) {
       // If this request was aborted (user clicked Retry), swallow the error silently
       if (abortController.signal.aborted) {

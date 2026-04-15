@@ -2,10 +2,16 @@ import { inject, injectable } from 'inversify';
 import { LLMServerService } from './llm-server-service';
 import { createProvider, type ChatMessage } from '../providers';
 import { NAME, DISPLAY_NAME } from '../consts';
+import type { ModelConfig } from '../../types/shared';
 
 @injectable()
 export class ProviderService {
+  #lastModel: ModelConfig | null = null;
   constructor(@inject(LLMServerService) private llmServerService: LLMServerService) {}
+
+  get lastModel() {
+    return this.#lastModel;
+  }
 
   async chatCompletion(messages: ChatMessage[], signal?: AbortSignal): Promise<string> {
     const servers = this.buildServerProvider();
@@ -36,6 +42,7 @@ export class ProviderService {
         clearTimeout(timer);
         server.provider.afterChatCompletion?.(rawResponse, server.modelConfig);
 
+        this.#lastModel = server.modelConfig;
         console.info(`use [${server.label}] success`);
         return server.provider.extractText(rawResponse);
       } catch (err) {
