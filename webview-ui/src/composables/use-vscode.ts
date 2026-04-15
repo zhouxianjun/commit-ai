@@ -13,7 +13,7 @@ export const useVSCode = createGlobalState(() => {
   const invoke = <K extends keyof InvokeRequest>(
     command: K,
     args?: InvokeRequest[K]
-  ): Promise<InvokeResponse[K]> => {
+  ): Promise<Awaited<InvokeResponse[K]>> => {
     return new Promise((resolve, reject) => {
       const id = invokeId++;
       invokeMap.set(id, { resolve, reject });

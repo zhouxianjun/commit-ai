@@ -9,6 +9,7 @@
   },
   "typescript.tsc.autoDetect": "off",
   "cSpell.words": [
+    "deepseek",
     "Gitmoji",
     "LITELLM",
     "lucide",

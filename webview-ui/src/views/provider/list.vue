@@ -98,7 +98,7 @@ const presets: PresetType[] = [
     }
   },
   {
-    name: 'Nvidia Build',
+    name: 'NVIDIA Build',
     description: 'Try NVIDIA NIM APIs',
     config: {
       type: 'openai',
@@ -107,7 +107,7 @@ const presets: PresetType[] = [
     }
   },
   {
-    name: 'Github Models',
+    name: 'Github',
     description: 'Github Copilot Models',
     config: {
       type: 'openai',

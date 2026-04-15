@@ -28,6 +28,7 @@ export type InvokeMap = {
   testProvider: { request: ServerConfig; response: boolean };
   testAllProviders: { request: void; response: boolean[] };
   fetchModels: { request: string; response: ModelConfig[] };
+  fetchDomainIcon: { request: string; response: Promise<string | null> };
 };
 
 export type InvokeRequest = { [K in keyof InvokeMap]: InvokeMap[K]['request'] };

@@ -5,6 +5,7 @@ import { ConfigService, ConfigKeys } from './config-service';
 import * as path from 'path';
 import { getHtmlForWebview } from '../utils/webview';
 import type { InvokeRequest, InvokeResponse } from '../../types/shared';
+import { fetchFavicon } from '../utils/utils';
 
 @injectable()
 export class WebviewService implements vscode.Disposable {
@@ -18,6 +19,7 @@ export class WebviewService implements vscode.Disposable {
     this.registerCommand('listProviders', () => {
       return this.configService.getConfig(ConfigKeys.SERVERS);
     });
+    this.registerCommand('fetchDomainIcon', fetchFavicon);
   }
 
   public async openSettings() {
