@@ -1,23 +1,30 @@
 import { inject, injectable } from 'inversify';
 import * as vscode from 'vscode';
-import BUILTIN_MODEL_CONTEXT from './model-context.json';
+import BUILTIN_MODEL_CONTEXT from '../../../data/model-config.json';
 import https from 'https';
 import { Context } from '../../consts';
 
 const LITELLM_JSON_URL =
   'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
-const CACHE_KEY = 'modelContextCache';
-const CACHE_TIMESTAMP_KEY = 'modelContextCacheTimestamp';
+const OPENROUTER_JSON_URL = 'https://openrouter.ai/api/v1/models?output_modalities=text';
+
+const CACHE_KEY = 'modelContextCache_v2';
+const CACHE_TIMESTAMP_KEY = 'modelContextCacheTimestamp_v2';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
+export interface ModelConfig {
+  max_tokens?: number;
+  max_input_token?: number;
+}
+
 interface ModelContextCache {
-  [modelName: string]: number;
+  [modelName: string]: ModelConfig;
 }
 
 @injectable()
 export class ModelContextService implements vscode.Disposable {
   private updateTimer: NodeJS.Timeout | null = null;
-  private fullContextMap: Record<string, number> | null = null;
+  private fullContextMap: Record<string, ModelConfig> | null = null;
   private normalizedIndex: Map<string, string> | null = null;
 
   constructor(@inject(Context) private readonly context: vscode.ExtensionContext) {
@@ -31,7 +38,7 @@ export class ModelContextService implements vscode.Disposable {
     }
   }
 
-  getContextWindowLimit(model: string): number | undefined {
+  getModelConfig(model: string): ModelConfig | undefined {
     if (!this.fullContextMap || !this.normalizedIndex) {
       this.rebuildIndex();
     }
@@ -64,6 +71,10 @@ export class ModelContextService implements vscode.Disposable {
     }
 
     return undefined;
+  }
+
+  getContextWindowLimit(model: string): number | undefined {
+    return this.getModelConfig(model)?.max_input_token;
   }
 
   async updateCacheIfNeeded() {
@@ -123,35 +134,46 @@ export class ModelContextService implements vscode.Disposable {
     this.normalizedIndex = index;
   }
 
-  private async fetchRemoteModelContext() {
+  private async fetchRemoteModelContext(): Promise<ModelContextCache | null> {
     try {
-      return new Promise((resolve) => {
-        https
-          .get(LITELLM_JSON_URL, { timeout: 10000 }, (res) => {
-            if (res.statusCode !== 200) {
-              resolve(null);
-              return;
-            }
-            let data = '';
-            res.on('data', (chunk) => (data += chunk));
-            res.on('end', () => {
-              try {
-                const parsed = JSON.parse(data);
-                resolve(this.extractChatModels(parsed));
-              } catch {
-                resolve(null);
-              }
-            });
-          })
-          .on('error', () => resolve(null))
-          .on('timeout', () => resolve(null));
-      });
+      const [liteData, orData] = await Promise.all([
+        this.fetchJson(LITELLM_JSON_URL),
+        this.fetchJson(OPENROUTER_JSON_URL)
+      ]);
+
+      const liteModels = this.processLiteLLMModels(liteData || {});
+      const orModels = this.processOpenRouterModels(orData || {});
+
+      return { ...liteModels, ...orModels };
     } catch {
       return null;
     }
   }
 
-  private extractChatModels(data: Record<string, any>) {
+  private async fetchJson(url: string): Promise<any> {
+    return new Promise((resolve) => {
+      https
+        .get(url, { timeout: 10000 }, (res) => {
+          if (res.statusCode !== 200) {
+            resolve(null);
+            return;
+          }
+          let data = '';
+          res.on('data', (chunk) => (data += chunk));
+          res.on('end', () => {
+            try {
+              resolve(JSON.parse(data));
+            } catch {
+              resolve(null);
+            }
+          });
+        })
+        .on('error', () => resolve(null))
+        .on('timeout', () => resolve(null));
+    });
+  }
+
+  private processLiteLLMModels(data: Record<string, any>): ModelContextCache {
     const result: ModelContextCache = {};
     for (const [modelName, config] of Object.entries(data)) {
       if (typeof config !== 'object' || config === null) {
@@ -160,9 +182,35 @@ export class ModelContextService implements vscode.Disposable {
       if (config.mode !== 'chat') {
         continue;
       }
-      const maxInputTokens = config.max_input_tokens;
-      if (typeof maxInputTokens === 'number' && maxInputTokens > 0) {
-        result[modelName] = maxInputTokens;
+      const max_tokens = config.max_tokens || config.max_output_tokens;
+      const max_input_token = config.max_input_tokens;
+
+      if (max_tokens || max_input_token) {
+        result[modelName] = {
+          max_tokens: typeof max_tokens === 'number' ? max_tokens : undefined,
+          max_input_token: typeof max_input_token === 'number' ? max_input_token : undefined
+        };
+      }
+    }
+    return result;
+  }
+
+  private processOpenRouterModels(data: any): ModelContextCache {
+    const result: ModelContextCache = {};
+    if (!data || !Array.isArray(data.data)) {
+      return result;
+    }
+
+    for (const model of data.data) {
+      const modelName = model.id;
+      const max_tokens = model.max_completion_tokens;
+      const max_input_token = model.context_length;
+
+      if (max_tokens || max_input_token) {
+        result[modelName] = {
+          max_tokens: typeof max_tokens === 'number' ? max_tokens : undefined,
+          max_input_token: typeof max_input_token === 'number' ? max_input_token : undefined
+        };
       }
     }
     return result;

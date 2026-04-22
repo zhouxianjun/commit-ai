@@ -22,7 +22,7 @@ export enum ConfigKeys {
 
 @injectable()
 export class ConfigService implements vscode.Disposable {
-  private configCache: Map<string, any> = new Map();
+  private configCache: Map<ConfigKeys, any> = new Map();
   private disposable: vscode.Disposable;
 
   constructor() {
@@ -33,20 +33,24 @@ export class ConfigService implements vscode.Disposable {
     });
   }
 
-  getConfig<T>(key: string, defaultValue?: T): T {
+  getConfiguration() {
+    return vscode.workspace.getConfiguration(NAME);
+  }
+
+  getConfig<T>(key: ConfigKeys, defaultValue?: T): T {
     if (!this.configCache.has(key)) {
-      const config = vscode.workspace.getConfiguration(NAME);
+      const config = this.getConfiguration();
       this.configCache.set(key, config.get<T>(key, defaultValue));
     }
     return this.configCache.get(key);
   }
 
   async updateConfig<T>(
-    key: string,
+    key: ConfigKeys,
     value: T,
     target: vscode.ConfigurationTarget = vscode.ConfigurationTarget.Global
   ): Promise<void> {
-    const config = vscode.workspace.getConfiguration(NAME);
+    const config = this.getConfiguration();
     await config.update(key, value, target);
     this.configCache.set(key, value);
   }

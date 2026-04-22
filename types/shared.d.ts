@@ -18,6 +18,7 @@ export interface ServerConfig {
 }
 
 export type InvokeMap = {
+  getConfiguration: { request: void; response: Record<string, unknown> };
   listProviders: { request: void; response: ServerConfig[] };
   addProvider: { request: ServerConfig; response: void };
   updateProvider: {

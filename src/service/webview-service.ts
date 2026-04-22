@@ -19,6 +19,9 @@ export class WebviewService implements vscode.Disposable {
     this.registerCommand('listProviders', () => {
       return this.configService.getConfig(ConfigKeys.SERVERS);
     });
+    this.registerCommand('getConfiguration', () =>
+      JSON.parse(JSON.stringify(this.configService.getConfiguration()))
+    );
     this.registerCommand('fetchDomainIcon', fetchFavicon);
   }
 

@@ -33,7 +33,7 @@
     "package": "vsce package --no-dependencies",
     "publish": "vsce publish --no-dependencies",
     "release": "node scripts/release.js",
-    "update-model-context": "node scripts/update-model-context.js",
+    "update-model-config": "node scripts/update-model-config.js",
     "vscode:prepublish": "pnpm run build && pnpm run webview:build",
     "watch": "tsdown --watch",
     "webview:build": "cd webview-ui && pnpm build",
@@ -252,6 +252,12 @@
           "default": 0,
           "minimum": 0,
           "description": "Global default max output tokens (0 = no limit). Used when a model does not specify its own."
+        },
+        "commit-ai.maxInputTokens": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0,
+          "description": "Global default max input tokens (0 = auto-detect from model name). Used when a model does not specify its own."
         },
         "commit-ai.reasoningEffort": {
           "type": "string",
