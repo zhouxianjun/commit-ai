@@ -10,7 +10,7 @@ import xAI from '@/assets/logo/xAI.png?inline';
 import openAI from '@/assets/logo/OpenAI.svg?inline';
 
 import type { ServerConfig } from '@shared-types/shared';
-import { shallowRef } from 'vue';
+import { computed, shallowRef } from 'vue';
 import { useVSCode } from './use-vscode';
 
 const providers = [
@@ -77,9 +77,12 @@ export const useProvider = (server: ServerConfig) => {
     });
   }
 
+  const activeModels = computed(() => server.models.filter((model) => model.enabled !== false));
+
   return {
     ...provider,
-    icon
+    icon,
+    activeModels
   };
 };
 

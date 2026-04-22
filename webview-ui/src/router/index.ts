@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-import ProviderList from '../views/provider/list.vue';
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -7,7 +6,20 @@ const router = createRouter({
     {
       path: '/',
       name: 'list',
-      component: ProviderList
+      component: () => import('../views/provider/list.vue')
+    },
+    {
+      path: '/edit/:index',
+      name: 'edit',
+      component: () => import('../views/provider/edit.vue'),
+      props: (route) => ({
+        index: Number(route.params.index)
+      })
+    },
+    {
+      path: '/add',
+      name: 'add',
+      component: () => import('../views/provider/edit.vue')
     }
   ]
 });

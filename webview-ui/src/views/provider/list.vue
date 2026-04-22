@@ -12,7 +12,7 @@
           <Gauge />
           TEST ALL
         </Button>
-        <Button variant="default">
+        <Button variant="default" @click="$router.push('/add')">
           <Plus />
           ADD PROVIDER
         </Button>
@@ -49,9 +49,10 @@
           class="flex flex-col gap-4"
         >
           <Provider
-            v-for="provider of providersStore.providers"
+            v-for="(provider, index) of providersStore.providers"
             :key="provider.baseURL"
             :config="provider"
+            :index="index"
             class="cursor-move"
           />
         </VueDraggable>

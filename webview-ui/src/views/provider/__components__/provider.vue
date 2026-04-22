@@ -14,28 +14,58 @@
       <Button variant="outline">
         <Gauge />
       </Button>
-      <Button variant="outline">
-        <SquarePen />
+      <Button variant="outline" @click="$router.push(`/edit/${props.index}`)">
+        <span class="text-xl font-black text-primary">{{ activeModels.length }}</span>
       </Button>
-      <Button variant="outline">
-        <span class="text-xl font-black text-primary">{{ config.models.length }}</span>
-      </Button>
-      <Button variant="outline" class="hover:bg-destructive">
-        <Trash />
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger>
+          <Button variant="outline" class="hover:bg-destructive">
+            <Trash />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete provider {{ name }} and all
+              models under it.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction @click="handleDelete">Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { ServerConfig } from '@shared-types/shared';
-import { Bot, Gauge, SquarePen, Trash } from 'lucide-vue-next';
+import { Bot, Gauge, Trash } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { useProvider } from '@/composables/use-provider';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction
+} from '@/components/ui/alert-dialog';
 
 const props = defineProps<{
   config: ServerConfig;
+  index: number;
 }>();
 
-const { name, icon } = useProvider(props.config);
+const { name, icon, activeModels } = useProvider(props.config);
+
+const handleDelete = () => {
+  console.log('delete');
+};
 </script>
