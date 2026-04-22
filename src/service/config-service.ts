@@ -25,10 +25,14 @@ export class ConfigService implements vscode.Disposable {
   private configCache: Map<ConfigKeys, any> = new Map();
   private disposable: vscode.Disposable;
 
+  private onDidChangeConfig: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
+  readonly onDidChange = this.onDidChangeConfig.event;
+
   constructor() {
     this.disposable = vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration(NAME)) {
         this.configCache.clear();
+        this.onDidChangeConfig.fire();
       }
     });
   }

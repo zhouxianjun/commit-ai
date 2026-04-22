@@ -1,21 +1,37 @@
 import { inject, injectable } from 'inversify';
 import { LLMServerService } from './llm-server-service';
-import { createProvider, type ChatMessage } from '../providers';
+import { createProvider, type AIProvider, type ChatMessage } from '../providers';
 import { NAME, DISPLAY_NAME } from '../consts';
 import type { ModelConfig } from '../../types/shared';
+import * as vscode from 'vscode';
 
 @injectable()
-export class ProviderService {
+export class ProviderService implements vscode.Disposable {
+  private disposable: vscode.Disposable;
   #lastModel: ModelConfig | null = null;
-  constructor(@inject(LLMServerService) private llmServerService: LLMServerService) {}
+  #servers: Array<{
+    provider: AIProvider;
+    modelConfig: ModelConfig;
+    timeout: number;
+    label: string;
+  }> = [];
+  constructor(@inject(LLMServerService) private llmServerService: LLMServerService) {
+    this.disposable = this.llmServerService.onDidChange(() => {
+      this.buildServerProvider();
+    });
+    this.buildServerProvider();
+  }
 
   get lastModel() {
     return this.#lastModel;
   }
 
+  get servers() {
+    return this.#servers;
+  }
+
   async chatCompletion(messages: ChatMessage[], signal?: AbortSignal): Promise<string> {
-    const servers = this.buildServerProvider();
-    if (servers.length === 0) {
+    if (this.#servers.length === 0) {
       throw new Error(
         `No AI servers configured. Please configure at least one server in ${NAME}.servers.`
       );
@@ -23,7 +39,7 @@ export class ProviderService {
 
     const errors: string[] = [];
 
-    for (const server of servers) {
+    for (const server of this.#servers) {
       let rawResponse: unknown;
       // Per-server abort: combines external signal + per-server timeout
       const controller = new AbortController();
@@ -70,12 +86,12 @@ export class ProviderService {
       }
     }
 
-    throw new Error(`All ${servers.length} server(s) failed:\n${errors.join('\n')}`);
+    throw new Error(`All ${this.#servers.length} server(s) failed:\n${errors.join('\n')}`);
   }
 
   private buildServerProvider() {
     const servers = this.llmServerService.getServers();
-    return servers.map((server) => {
+    this.#servers = servers.map((server) => {
       const provider = createProvider(server.config);
       return {
         provider,
@@ -84,5 +100,9 @@ export class ProviderService {
         label: server.label
       };
     });
+  }
+
+  dispose() {
+    this.disposable.dispose();
   }
 }

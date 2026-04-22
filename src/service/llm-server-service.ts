@@ -16,15 +16,16 @@ export class LLMServerService implements vscode.Disposable {
   private disposable: vscode.Disposable;
   private servers: Server[] = [];
 
+  private onDidChangeServer: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
+  readonly onDidChange = this.onDidChangeServer.event;
+
   constructor(
     @inject(ConfigService)
     private configService: ConfigService
   ) {
-    this.disposable = vscode.workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration(NAME)) {
-        this.servers = [];
-        this.buildServers();
-      }
+    this.disposable = this.configService.onDidChange(() => {
+      this.servers = [];
+      this.buildServers();
     });
     this.buildServers();
   }
@@ -65,6 +66,7 @@ export class LLMServerService implements vscode.Disposable {
           };
         });
     });
+    this.onDidChangeServer.fire();
   }
 
   dispose() {

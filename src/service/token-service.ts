@@ -45,11 +45,7 @@ export class TokenService implements vscode.Disposable {
     private readonly providerService: ProviderService
   ) {
     this.scheduleUpdate = debounce(this.updateTokenCount.bind(this), 500);
-    this.disposables.push(
-      vscode.workspace.onDidChangeConfiguration(() => {
-        this.scheduleUpdate();
-      })
-    );
+    this.disposables.push(this.configService.onDidChange(() => this.scheduleUpdate()));
     this.disposables.push(vscode.workspace.onDidChangeTextDocument(() => this.scheduleUpdate()));
     const gitApi = getGitApi();
     if (gitApi) {

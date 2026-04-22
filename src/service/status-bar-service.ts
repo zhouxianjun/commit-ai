@@ -24,6 +24,7 @@ type StatusConfig = {
 @injectable()
 export class StatusBarService implements vscode.Disposable {
   private statusBarItem: vscode.StatusBarItem;
+  private disposable: vscode.Disposable;
 
   constructor(
     @inject(TokenService) private tokenService: TokenService,
@@ -33,7 +34,7 @@ export class StatusBarService implements vscode.Disposable {
     this.statusBarItem.command = Commands.GENERATE_COMMIT;
     this.statusBarItem.show();
 
-    this.tokenService.onChange((state) => this.updateStatusBar(state));
+    this.disposable = this.tokenService.onChange((state) => this.updateStatusBar(state));
     this.updateStatusBar(this.tokenService.state);
   }
 
@@ -107,5 +108,6 @@ export class StatusBarService implements vscode.Disposable {
 
   dispose() {
     this.statusBarItem.dispose();
+    this.disposable.dispose();
   }
 }
