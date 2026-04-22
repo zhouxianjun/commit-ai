@@ -1,12 +1,8 @@
 import { inject, injectable } from 'inversify';
 import * as vscode from 'vscode';
 import BUILTIN_MODEL_CONTEXT from '../../../data/model-config.json';
-import https from 'https';
 import { Context } from '../../consts';
-
-const LITELLM_JSON_URL =
-  'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
-const OPENROUTER_JSON_URL = 'https://openrouter.ai/api/v1/models?output_modalities=text';
+import { fetchRemoteModelContext } from '../../../scripts/model.js';
 
 const CACHE_KEY = 'modelContextCache_v2';
 const CACHE_TIMESTAMP_KEY = 'modelContextCacheTimestamp_v2';
@@ -86,7 +82,7 @@ export class ModelContextService implements vscode.Disposable {
     }
 
     try {
-      const remote = await this.fetchRemoteModelContext();
+      const remote = await fetchRemoteModelContext();
       if (remote && Object.keys(remote).length > 0) {
         await this.context.globalState.update(CACHE_KEY, remote);
         await this.context.globalState.update(CACHE_TIMESTAMP_KEY, now);
@@ -132,87 +128,5 @@ export class ModelContextService implements vscode.Disposable {
 
     this.fullContextMap = rawMap;
     this.normalizedIndex = index;
-  }
-
-  private async fetchRemoteModelContext(): Promise<ModelContextCache | null> {
-    try {
-      const [liteData, orData] = await Promise.all([
-        this.fetchJson(LITELLM_JSON_URL),
-        this.fetchJson(OPENROUTER_JSON_URL)
-      ]);
-
-      const liteModels = this.processLiteLLMModels(liteData || {});
-      const orModels = this.processOpenRouterModels(orData || {});
-
-      return { ...liteModels, ...orModels };
-    } catch {
-      return null;
-    }
-  }
-
-  private async fetchJson(url: string): Promise<any> {
-    return new Promise((resolve) => {
-      https
-        .get(url, { timeout: 10000 }, (res) => {
-          if (res.statusCode !== 200) {
-            resolve(null);
-            return;
-          }
-          let data = '';
-          res.on('data', (chunk) => (data += chunk));
-          res.on('end', () => {
-            try {
-              resolve(JSON.parse(data));
-            } catch {
-              resolve(null);
-            }
-          });
-        })
-        .on('error', () => resolve(null))
-        .on('timeout', () => resolve(null));
-    });
-  }
-
-  private processLiteLLMModels(data: Record<string, any>): ModelContextCache {
-    const result: ModelContextCache = {};
-    for (const [modelName, config] of Object.entries(data)) {
-      if (typeof config !== 'object' || config === null) {
-        continue;
-      }
-      if (config.mode !== 'chat') {
-        continue;
-      }
-      const max_tokens = config.max_tokens || config.max_output_tokens;
-      const max_input_token = config.max_input_tokens;
-
-      if (max_tokens || max_input_token) {
-        result[modelName] = {
-          max_tokens: typeof max_tokens === 'number' ? max_tokens : undefined,
-          max_input_token: typeof max_input_token === 'number' ? max_input_token : undefined
-        };
-      }
-    }
-    return result;
-  }
-
-  private processOpenRouterModels(data: any): ModelContextCache {
-    const result: ModelContextCache = {};
-    if (!data || !Array.isArray(data.data)) {
-      return result;
-    }
-
-    for (const model of data.data) {
-      const modelName = model.id;
-      const max_tokens = model.max_completion_tokens;
-      const max_input_token = model.context_length;
-
-      if (max_tokens || max_input_token) {
-        result[modelName] = {
-          max_tokens: typeof max_tokens === 'number' ? max_tokens : undefined,
-          max_input_token: typeof max_input_token === 'number' ? max_input_token : undefined
-        };
-      }
-    }
-    return result;
   }
 }
