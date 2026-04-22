@@ -65,16 +65,21 @@
           </FormField>
           <FormField v-slot="{ value, handleChange }" name="timeout">
             <FormItem class="flex-1">
-              <FormLabel class="text-foreground/50">Timeout (ms)</FormLabel>
+              <FormLabel class="text-foreground/50">
+                <Checkbox v-model="overrideTimeout" />
+                <span>Timeout (ms)</span>
+              </FormLabel>
               <FormControl>
                 <NumberField
                   class="w-full bg-secondary"
-                  :model-value="value"
-                  @update:model-value="handleChange"
+                  :model-value="value ?? timeout"
                   :min="0"
+                  :disabled="!overrideTimeout"
+                  @update:model-value="handleChange"
                 >
                   <NumberFieldContent>
                     <button
+                      v-if="overrideTimeout"
                       type="button"
                       class="absolute top-1/2 -translate-y-1/2 left-0 p-3 hover:bg-accent hover:text-accent-foreground disabled:opacity-20 transition-colors"
                       :disabled="value === 0"
@@ -84,6 +89,7 @@
                     </button>
                     <NumberFieldInput />
                     <button
+                      v-if="overrideTimeout"
                       type="button"
                       class="absolute top-1/2 -translate-y-1/2 right-0 p-3 hover:bg-accent hover:text-accent-foreground disabled:opacity-20 transition-colors"
                       @click="handleChange((value || 0) + 1000)"
@@ -138,6 +144,8 @@ import { computed, ref } from 'vue';
 import Model from './__components__/model.vue';
 import type { ModelConfig } from '@shared-types/shared';
 import { isNil } from 'lodash-es';
+import { useDefaultConfig } from '@/composables/use-default-config';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const props = defineProps<{
   index?: number;
@@ -163,10 +171,16 @@ const form = useForm({
     type: 'openai',
     baseURL: '',
     apiKey: '',
-    timeout: 30000,
     ...provider.value
   }
 });
+const { override: overrideTimeout, value: timeout } = useDefaultConfig({
+  get: () => form.values.timeout,
+  set: (value) => form.setFieldValue('timeout', value),
+  key: 'timeout',
+  defaultValue: 30000
+});
+
 const models = ref<ModelConfig[]>(provider.value?.models ?? []);
 
 const onSubmit = form.handleSubmit((values) => {

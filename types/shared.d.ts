@@ -1,3 +1,5 @@
+import type { ReasoningEffort } from 'openai/resources';
+import type { ModelConfig as BuiltinModelConfig } from '../src/service/model-context';
 export interface ModelConfig {
   name: string;
   enabled?: boolean;
@@ -30,6 +32,7 @@ export type InvokeMap = {
   testAllProviders: { request: void; response: boolean[] };
   fetchModels: { request: string; response: ModelConfig[] };
   fetchDomainIcon: { request: string; response: Promise<string | null> };
+  getBuiltinModelConfig: { request: string; response: BuiltinModelConfig | undefined };
 };
 
 export type InvokeRequest = { [K in keyof InvokeMap]: InvokeMap[K]['request'] };

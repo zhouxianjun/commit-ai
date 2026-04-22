@@ -6,6 +6,7 @@ import * as path from 'path';
 import { getHtmlForWebview } from '../utils/webview';
 import type { InvokeRequest, InvokeResponse } from '../../types/shared';
 import { fetchFavicon } from '../utils/utils';
+import { ModelContextService } from './model-context';
 
 @injectable()
 export class WebviewService implements vscode.Disposable {
@@ -14,7 +15,8 @@ export class WebviewService implements vscode.Disposable {
 
   constructor(
     @inject(Context) private context: vscode.ExtensionContext,
-    @inject(ConfigService) private configService: ConfigService
+    @inject(ConfigService) private configService: ConfigService,
+    @inject(ModelContextService) private modelContextService: ModelContextService
   ) {
     this.registerCommand('listProviders', () => {
       return this.configService.getConfig(ConfigKeys.SERVERS);
@@ -23,6 +25,9 @@ export class WebviewService implements vscode.Disposable {
       JSON.parse(JSON.stringify(this.configService.getConfiguration()))
     );
     this.registerCommand('fetchDomainIcon', fetchFavicon);
+    this.registerCommand('getBuiltinModelConfig', (name: string) =>
+      this.modelContextService.getModelConfig(name)
+    );
   }
 
   public async openSettings() {
