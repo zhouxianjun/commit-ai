@@ -10,6 +10,8 @@ type Asset = {
   type?: string;
   href?: string;
   src?: string;
+  rel?: string;
+  crossorigin?: string;
 };
 
 export const getHtmlForWebview = (
@@ -46,6 +48,7 @@ const getHtmlAssets = (webviewPath: string, webview: vscode.Webview): Asset[] =>
       assets.push({
         tag: 'script',
         type: $(el).attr('type'),
+        crossorigin: $(el).attr('crossorigin'),
         src: webview.asWebviewUri(vscode.Uri.file(path.join(webviewPath, src))).toString()
       });
     }
@@ -55,6 +58,8 @@ const getHtmlAssets = (webviewPath: string, webview: vscode.Webview): Asset[] =>
     if (href) {
       assets.push({
         tag: 'link',
+        rel: $(el).attr('rel'),
+        crossorigin: $(el).attr('crossorigin'),
         href: webview.asWebviewUri(vscode.Uri.file(path.join(webviewPath, href))).toString()
       });
     }
@@ -80,5 +85,5 @@ const generateHtml = (
 };
 
 const generateAssetElement = (asset: Asset) => {
-  return `<${asset.tag} ${asset.type ? `type="${asset.type}"` : ''} ${asset.href ? `href="${asset.href}"` : ''} ${asset.src ? `src="${asset.src}"` : ''}></${asset.tag}>`;
+  return `<${asset.tag} ${asset.type ? `type="${asset.type}"` : ''} ${asset.rel ? `rel="${asset.rel}"` : ''} ${asset.crossorigin ? `crossorigin="${asset.crossorigin}"` : ''} ${asset.href ? `href="${asset.href}"` : ''} ${asset.src ? `src="${asset.src}"` : ''}></${asset.tag}>`;
 };

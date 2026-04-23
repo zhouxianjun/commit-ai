@@ -1,11 +1,38 @@
 .vscode/**
 .vscode-test/**
-src/**
+.git/**
+.github/**
 .gitignore
-.yarnrc
-vsc-extension-quickstart.md
-**/tsconfig.json
-**/.eslintrc.json
+.editorconfig
+.eslintignore
+.eslintrc.json
+**/.DS_Store
 **/*.map
 **/*.ts
-scripts
+**/*.tsx
+**/*.vue
+
+# Source code
+src/**
+scripts/**
+types/**
+
+# Webview source (entire directory except the build output if it stayed there, 
+# but it builds to ../out/webview)
+webview-ui/**
+
+# Node modules - strongly recommended for bundled extensions
+node_modules/**
+
+# Development files
+tsdown.config.ts
+tsconfig.app.json
+tsconfig.json
+tsconfig.node.json
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+# Build artifacts: keep only dist and out/webview
+out/*
+!out/webview/
+!dist/

@@ -20,6 +20,16 @@ export default defineConfig({
   },
   build: {
     outDir: '../out/webview',
-    emptyOutDir: true
+    emptyOutDir: true,
+    // 禁用代码分割，不然需要处理异步加载chunk asWebview资源
+    cssCodeSplit: false,
+    rollupOptions: {
+      output: {
+        manualChunks: () => 'index',
+        entryFileNames: 'assets/[name].js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name].[ext]'
+      }
+    }
   }
 });

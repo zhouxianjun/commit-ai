@@ -11,7 +11,8 @@ export default defineConfig({
   shims: true,
   deps: {
     alwaysBundle: [
-      /\@google\/generative-ai/,
+      /\@google\/genai/,
+      /cheerio/,
       /fs-extra/,
       /inversify/,
       /lodash-es/,
