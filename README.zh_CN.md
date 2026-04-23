@@ -44,6 +44,11 @@
   - **Azure OpenAI**: 完美支持企业级 Azure 接口。
   - **Google Gemini**: 支持最新的 Gemini 2.0 Flash/Pro。
   - **DeepSeek / 其他**: 只要兼容 OpenAI 接口标准的模型均可直接接入。
+- **🖥️ 可视化配置面板**
+  - 提供直观的 UI 界面，轻松管理多组 AI 服务商与模型。
+  - 支持一键测试连接、拖拽调整优先级、快速开启/禁用模型。
+- **📊 详尽的 Token 消耗统计**
+  - 实时记录并汇总各服务商的 Token 消耗详情，支持按周期查看历史数据。
 - **📝 提交规范一致性**
   - 默认输出风格严谨的 Conventional Commits。
   - **Gitmoji 支持**: 自由开启或关闭表情符号。
@@ -60,7 +65,7 @@
 
 ## 🤯 使用流程
 
-1. **配置服务**: 在 VS Code 设置中搜索 `commit-ai.servers`，配置你的 API Key。
+1. **配置服务**: 在命令面板 (`Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows) 中搜索并执行 `CommitAI: AI Server Settings` 进入可视化配置页面。也可以在 VS Code 设置中找到 `commit-ai.servers` 点击提示链接进入。
 2. **暂存更改**: 在 Git 面板中将修改的文件 `git add` 到暂存区。
 3. **输入引导 (可选)**: 如果有特殊说明，可以在提交框先写一段话。
 4. **一键生成**: 点击提交框右上角的 `$(sparkle)`（或 CommitAI）图标。

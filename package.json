@@ -144,7 +144,7 @@
         "commit-ai.servers": {
           "type": "array",
           "default": [],
-          "description": "AI server configurations. Each entry defines a provider with its API credentials and available models. Servers are tried in order; on failure the next server is used automatically.",
+          "description": "AI server configurations. Each entry defines a provider with its API credentials and available models. Servers are tried in order; on failure the next server is used automatically. Tip: Use the [AI Server Settings](command:extension.commit-ai.settings) command for a graphical interface to manage servers and view detailed token usage statistics.",
           "items": {
             "type": "object",
             "required": [

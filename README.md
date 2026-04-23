@@ -44,6 +44,11 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
   - **Azure OpenAI**: Native support for enterprise-grade Azure endpoints.
   - **Google Gemini**: Support for the latest Gemini 2.0 Flash/Pro.
   - **DeepSeek & More**: Any provider compatible with the OpenAI API standard can be integrated.
+- **🖥️ Graphical Configuration Dashboard**
+  - Intuitive UI for managing AI providers and models.
+  - Test connections and reorder servers with ease.
+- **📊 Detailed Token Usage Stats**
+  - Track your consumption over time with detailed logs and statistics per provider.
 - **📝 Consistency & Conventions**
   - Strictly follows the Conventional Commits specification.
   - **Gitmoji Support**: Toggle emoji prefixes (✨, 🐛, etc.) on or off.
@@ -60,7 +65,7 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
 
 ## 🤯 How to Use
 
-1. **Configure Servers**: Search for `commit-ai.servers` in VS Code settings and add your API credentials.
+1. **Configure Servers**: Open the Command Palette (`Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows) and run `CommitAI: AI Server Settings`. Alternatively, search for `commit-ai.servers` in VS Code settings and click the configuration link.
 2. **Stage Changes**: Run `git add` for the files you wish to commit.
 3. **Provide Context (Optional)**: Type some brief notes in the Source Control message box if you want to guide the AI.
 4. **Generate**: Click the `$(sparkle)` (or CommitAI) icon button in the Source Control title bar.

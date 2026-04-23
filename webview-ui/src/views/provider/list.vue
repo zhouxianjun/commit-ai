@@ -8,6 +8,9 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
+        <Button variant="outline" size="icon" @click="providersStore.refresh()">
+          <RefreshCcw />
+        </Button>
         <Button variant="default" @click="$router.push('/add')">
           <Plus />
           ADD PROVIDER
@@ -78,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { Plus } from 'lucide-vue-next';
+import { Plus, RefreshCcw } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import Preset, { type Preset as PresetType } from './__components__/preset.vue';
 import Provider from './__components__/provider.vue';
