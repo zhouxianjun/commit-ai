@@ -17,9 +17,9 @@ jobs:
           node-version: 22.18
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Build extension
-        run: pnpm run build
+        run: |
+          pnpm install --frozen-lockfile
+          cd webview-ui && pnpm install --frozen-lockfile
       - name: Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v2
         with:
