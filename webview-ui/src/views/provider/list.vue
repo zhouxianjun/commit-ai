@@ -43,6 +43,7 @@
           v-model="providersStore.providers"
           :animation="150"
           class="flex flex-col gap-4"
+          @sort="handleSorted"
         >
           <Provider
             v-for="(provider, index) of providersStore.providers"
@@ -59,7 +60,7 @@
       class="mt-16 bg-secondary/20 p-6 flex flex-col md:flex-row gap-12 border-t border-secondary/90"
     >
       <div class="flex flex-col gap-2">
-        <span class="text-[10px] uppercase font-bold tracking-widest">Total Servers</span>
+        <span class="text-[10px] uppercase font-bold tracking-widest">Total Providers</span>
         <span class="text-2xl font-black">{{ providersStore.total }}</span>
       </div>
       <div class="flex flex-col gap-2">
@@ -77,6 +78,7 @@ import Preset, { type Preset as PresetType } from './__components__/preset.vue';
 import Provider from './__components__/provider.vue';
 import { VueDraggable } from 'vue-draggable-plus';
 import { useProviders } from '@/store/provides';
+import { cloneDeep } from 'lodash-es';
 
 const presets: PresetType[] = [
   {
@@ -122,5 +124,8 @@ providersStore.refresh();
 const handleDelete = async (index: number) => {
   await providersStore.deleteProvider(index);
   providersStore.refresh();
+};
+const handleSorted = () => {
+  providersStore.saveServers(cloneDeep(providersStore.providers));
 };
 </script>

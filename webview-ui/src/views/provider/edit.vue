@@ -118,13 +118,16 @@
           </FormField>
         </div>
       </div>
-      <div class="flex flex-1 flex-col gap-4 overflow-y-auto">
-        <Model
-          v-for="model of models"
-          :key="model.name"
-          :model="model"
-          @delete="handleDeleteModel"
-        />
+      <div class="flex-1 overflow-y-auto">
+        <VueDraggable v-model="models" :animation="150" class="flex flex-col gap-4">
+          <Model
+            v-for="model of models"
+            :key="model.name"
+            :model="model"
+            class="cursor-move"
+            @delete="handleDeleteModel"
+          />
+        </VueDraggable>
       </div>
     </div>
 
@@ -148,6 +151,7 @@ import { Gauge, Plus, Minus, Settings } from 'lucide-vue-next';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { useForm } from 'vee-validate';
+import { VueDraggable } from 'vue-draggable-plus';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import {
   Select,

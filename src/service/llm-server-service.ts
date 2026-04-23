@@ -53,6 +53,10 @@ export class LLMServerService implements vscode.Disposable {
     this.configService.updateConfig(ConfigKeys.SERVERS, servers);
   }
 
+  saveServers(servers: ServerConfig[]) {
+    this.configService.updateConfig(ConfigKeys.SERVERS, servers);
+  }
+
   private buildServers() {
     const configs = this.configService.getConfig<ServerConfig[]>(ConfigKeys.SERVERS, []);
     const globalTimeout = this.configService.getConfig<number>(ConfigKeys.TIMEOUT, 60000);

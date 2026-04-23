@@ -29,6 +29,7 @@ export class WebviewService implements vscode.Disposable {
       this.llmServerService.updateServer(args.index, args.config)
     );
     this.registerCommand('deleteProvider', (index) => this.llmServerService.deleteServer(index));
+    this.registerCommand('saveServers', (servers) => this.llmServerService.saveServers(servers));
     this.registerCommand('getConfiguration', () =>
       JSON.parse(JSON.stringify(this.configService.getConfiguration()))
     );

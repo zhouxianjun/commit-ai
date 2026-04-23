@@ -29,6 +29,7 @@ export type InvokeMap = {
     response: void;
   };
   deleteProvider: { request: number; response: void };
+  saveServers: { request: ServerConfig[]; response: void };
   fetchModels: { request: ProviderConfig; response: Promise<string[]> };
   fetchDomainIcon: { request: string; response: Promise<string | null> };
   getBuiltinModelConfig: { request: string; response: BuiltinModelConfig | undefined };

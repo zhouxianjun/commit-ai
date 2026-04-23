@@ -23,6 +23,7 @@ export const useProviders = defineStore('providers', () => {
     invoke('updateProvider', { index, config });
 
   const deleteProvider = (index: number) => invoke('deleteProvider', index);
+  const saveServers = (servers: ServerConfig[]) => invoke('saveServers', servers);
 
   return {
     providers,
@@ -32,6 +33,7 @@ export const useProviders = defineStore('providers', () => {
     totalModels,
 
     updateProvider,
-    deleteProvider
+    deleteProvider,
+    saveServers
   };
 });
