@@ -11,6 +11,14 @@
       </div>
     </div>
     <div class="flex items-center gap-2">
+      <div v-if="stats" class="flex items-center gap-1">
+        <span class="text-sm text-muted-foreground"
+          >{{ formatToken(stats.totalUsage.inputTokens) }}/{{
+            formatToken(stats.totalUsage.outputTokens)
+          }}</span
+        >
+        <span class="text-xs text-muted-foreground/50">tokens</span>
+      </div>
       <Button variant="outline" @click="test">
         <Gauge />
       </Button>
@@ -61,6 +69,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'vue-sonner';
 import { useProviderModels } from '@/composables/use-provider-models';
+import { useProviders } from '@/store/provides';
+import { computed } from 'vue';
+import { formatToken } from '@/utils';
 
 const emit = defineEmits<{
   delete: [index: number];
@@ -70,8 +81,11 @@ const props = defineProps<{
   index: number;
 }>();
 
+const providersStore = useProviders();
 const { name, icon, activeModels } = useProvider(props.config);
 const { fetchModels } = useProviderModels();
+
+const stats = computed(() => providersStore.providerStats.get(props.config.providerKey));
 
 const test = () => {
   toast.promise(() => fetchModels(props.config), {

@@ -4,6 +4,7 @@ import type { ReasoningEffort } from 'openai/resources';
 import * as vscode from 'vscode';
 import { zeroToUndefined } from '../utils/utils';
 import type { ModelConfig, ServerConfig } from '../../types/shared';
+import { createProviderKey } from '../providers';
 
 export interface Server {
   config: ServerConfig;
@@ -28,6 +29,13 @@ export class LLMServerService implements vscode.Disposable {
       this.buildServers();
     });
     this.buildServers();
+  }
+
+  listProviders() {
+    return this.configService.getConfig<ServerConfig[]>(ConfigKeys.SERVERS).map((server) => ({
+      ...server,
+      providerKey: createProviderKey(server)
+    }));
   }
 
   getServers() {

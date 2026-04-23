@@ -124,6 +124,7 @@
             v-for="model of models"
             :key="model.name"
             :model="model"
+            :token-stats="modelTokenStats[model.name]"
             class="cursor-move"
             @delete="handleDeleteModel"
           />
@@ -165,9 +166,14 @@ import { Input } from '@/components/ui/input';
 import { NumberField, NumberFieldContent, NumberFieldInput } from '@/components/ui/number-field';
 import { Spinner } from '@/components/ui/spinner';
 import { useProviders } from '@/store/provides';
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import Model from './__components__/model.vue';
-import type { ModelConfig, ProviderConfig, ServerConfig } from '@shared-types/shared';
+import type {
+  ModelConfig,
+  ProviderConfig,
+  ServerConfig,
+  TokenUsageStats
+} from '@shared-types/shared';
 import { cloneDeep, isNil } from 'lodash-es';
 import { useDefaultConfig } from '@/composables/use-default-config';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -188,6 +194,25 @@ const provider = computed(() =>
   !isNil(props.index) ? providerStore.providers[props.index] : undefined
 );
 const models = ref<ModelConfig[]>(provider.value?.models ?? []);
+
+const modelTokenStats = computed(() => {
+  if (!provider.value) {
+    return {};
+  }
+  const tokenStats = providerStore.providerStats.get(provider.value.providerKey);
+  if (!tokenStats) {
+    return {};
+  }
+  return tokenStats.modelStats.reduce(
+    (acc, stat) => {
+      acc[stat.modelName] = stat;
+      return acc;
+    },
+    {} as Record<string, TokenUsageStats>
+  );
+});
+
+watchEffect(() => console.log(modelTokenStats.value));
 
 const schema = z.object({
   type: z.enum(['openai', 'azure', 'gemini']),

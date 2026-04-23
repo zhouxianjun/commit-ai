@@ -76,6 +76,16 @@ export class GeminiProvider implements AIProvider<GenerateContentResponse> {
     return text;
   }
 
+  extractUsage(response: GenerateContentResponse): {
+    inputTokens?: number;
+    outputTokens?: number;
+  } {
+    return {
+      inputTokens: response.usageMetadata?.promptTokenCount,
+      outputTokens: response.usageMetadata?.candidatesTokenCount
+    };
+  }
+
   private transformThinkLevel(effort: ReasoningEffort) {
     if (effort === 'minimal') {
       return ThinkingLevel.MINIMAL;

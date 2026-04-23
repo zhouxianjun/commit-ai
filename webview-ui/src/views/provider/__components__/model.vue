@@ -19,7 +19,17 @@
           {{ enabled ? 'ENABLED' : 'DISABLED' }}
         </span>
       </div>
-      <div class="text-foreground font-bold text-2xl">{{ model.name }}</div>
+      <div class="flex flex-col gap-2">
+        <div class="text-foreground font-bold text-2xl">{{ model.name }}</div>
+        <div v-if="tokenStats" class="flex items-center gap-1">
+          <span class="text-sm text-muted-foreground"
+            >{{ formatToken(tokenStats.inputTokens) }}/{{
+              formatToken(tokenStats.outputTokens)
+            }}</span
+          >
+          <span class="text-xs text-muted-foreground/50">tokens</span>
+        </div>
+      </div>
       <div class="flex-1 grid grid-cols-[repeat(auto-fill,200px)] gap-4">
         <div class="flex flex-col gap-4">
           <div class="flex items-center justify-between gap-4">
@@ -57,7 +67,7 @@
           <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-2">
               <Checkbox id="maxInputTokens" v-model="overrideMaxInputTokens" />
-              <label for="maxInputTokens" class="text-foreground/50 text-sm">CONTEXT LENGTH</label>
+              <label for="maxInputTokens" class="text-foreground/50 text-sm">MAX INPUT</label>
             </div>
             <span class="text-foreground text-sm">{{ maxInputTokensSlider }}</span>
           </div>
@@ -142,15 +152,17 @@ import {
 import { useDefaultConfig } from '@/composables/use-default-config';
 import { useModelConfig } from '@/composables/use-model-config';
 import { useSingleSlider } from '@/composables/use-single-slider';
-import type { ModelConfig } from '@shared-types/shared';
+import type { ModelConfig, TokenUsageStats } from '@shared-types/shared';
 import { Trash } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { formatToken } from '@/utils';
 
 const emit = defineEmits<{
   delete: [model: ModelConfig];
 }>();
 const props = defineProps<{
   model: ModelConfig;
+  tokenStats?: TokenUsageStats;
 }>();
 
 const modelConfig = useModelConfig(props.model.name);

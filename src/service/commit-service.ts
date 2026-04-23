@@ -53,21 +53,25 @@ export class CommitService {
         }
 
         progress.report({ message: 'Generating commit message...' });
-        const commitMessage = await this.providerService.chatCompletion(
-          messages,
-          abortController.signal
-        );
+        const {
+          text: commitMessage,
+          usage,
+          model
+        } = await this.providerService.chatCompletion(messages, abortController.signal);
         if (!commitMessage) {
           throw new Error('AI provider returned an empty message.');
         }
 
         scmInputBox.value = commitMessage.trim();
-      });
 
-      const time = Date.now() - startTime;
-      vscode.window.showInformationMessage(
-        `Successfully generated commit message using ${this.providerService.lastModel?.name} in ${time}ms`
-      );
+        const time = Date.now() - startTime;
+        const usageText = usage
+          ? ` (Input: ${usage.inputTokens ?? 0}, Output: ${usage.outputTokens ?? 0})`
+          : '';
+        vscode.window.showInformationMessage(
+          `Successfully generated commit message using ${model.name} in ${time}ms${usageText}`
+        );
+      });
     } catch (err) {
       // If this request was aborted (user clicked Retry), swallow the error silently
       if (abortController.signal.aborted) {

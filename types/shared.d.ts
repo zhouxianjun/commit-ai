@@ -13,12 +13,28 @@ export interface ModelConfig {
 export interface ProviderConfig {
   type: 'openai' | 'gemini' | 'azure';
   apiKey: string;
+  providerKey: string;
   baseURL?: string;
   apiVersion?: string;
   timeout?: number;
 }
 export interface ServerConfig extends ProviderConfig {
   models: ModelConfig[];
+}
+
+export interface TokenUsageStats {
+  inputTokens: number;
+  outputTokens: number;
+}
+
+export interface TokenStats {
+  providerKey: string;
+  modelStats: {
+    inputTokens: number;
+    outputTokens: number;
+    modelName: string;
+  }[];
+  totalUsage: TokenUsageStats;
 }
 
 export type InvokeMap = {
@@ -33,6 +49,7 @@ export type InvokeMap = {
   fetchModels: { request: ProviderConfig; response: Promise<string[]> };
   fetchDomainIcon: { request: string; response: Promise<string | null> };
   getBuiltinModelConfig: { request: string; response: BuiltinModelConfig | undefined };
+  getTokenStats: { request: void; response: TokenStats[] };
 };
 
 export type InvokeRequest = { [K in keyof InvokeMap]: InvokeMap[K]['request'] };

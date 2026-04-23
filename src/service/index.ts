@@ -10,6 +10,7 @@ import { CommandService } from './command-service';
 import { CommitService } from './commit-service';
 import { PromptService } from './prompt-service';
 import { ProviderService } from './provider-service';
+import { TokenStatsService } from './token-stats-service';
 import { WebviewService } from './webview-service';
 
 export const container = new Container();
@@ -20,6 +21,7 @@ const services = [
   ModelContextService,
   PromptService,
   TokenService,
+  TokenStatsService,
   StatusBarService,
   ProviderService,
   CommitService,

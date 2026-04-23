@@ -10,6 +10,8 @@ import { ModelContextService } from './model-context';
 import { ProviderService } from './provider-service';
 import { LLMServerService } from './llm-server-service';
 
+import { TokenStatsService } from './token-stats-service';
+
 @injectable()
 export class WebviewService implements vscode.Disposable {
   private panel?: vscode.WebviewPanel;
@@ -20,11 +22,10 @@ export class WebviewService implements vscode.Disposable {
     @inject(ConfigService) private configService: ConfigService,
     @inject(ModelContextService) private modelContextService: ModelContextService,
     @inject(ProviderService) private providerService: ProviderService,
-    @inject(LLMServerService) private llmServerService: LLMServerService
+    @inject(LLMServerService) private llmServerService: LLMServerService,
+    @inject(TokenStatsService) private tokenStatsService: TokenStatsService
   ) {
-    this.registerCommand('listProviders', () => {
-      return this.configService.getConfig(ConfigKeys.SERVERS);
-    });
+    this.registerCommand('listProviders', () => this.llmServerService.listProviders());
     this.registerCommand('updateProvider', (args) =>
       this.llmServerService.updateServer(args.index, args.config)
     );
@@ -38,6 +39,7 @@ export class WebviewService implements vscode.Disposable {
       this.modelContextService.getModelConfig(name)
     );
     this.registerCommand('fetchModels', (provider) => this.providerService.listModels(provider));
+    this.registerCommand('getTokenStats', () => this.tokenStatsService.getAllStats());
   }
 
   public async openSettings() {

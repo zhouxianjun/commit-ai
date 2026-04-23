@@ -1,36 +1,41 @@
 import { inject, injectable } from 'inversify';
 import { LLMServerService } from './llm-server-service';
-import { createProvider, type AIProvider, type ChatMessage } from '../providers';
+import { createProvider, createProviderKey, type AIProvider, type ChatMessage } from '../providers';
 import { NAME, DISPLAY_NAME } from '../consts';
 import type { ModelConfig, ProviderConfig } from '../../types/shared';
 import * as vscode from 'vscode';
+import { TokenStatsService } from './token-stats-service';
+import type { TokenUsage } from '../providers/types';
+import { ConfigKeys, ConfigService } from './config-service';
 
 @injectable()
 export class ProviderService implements vscode.Disposable {
   private disposable: vscode.Disposable;
-  #lastModel: ModelConfig | null = null;
   #servers: Array<{
     provider: AIProvider;
     modelConfig: ModelConfig;
     timeout: number;
     label: string;
+    providerKey: string;
   }> = [];
-  constructor(@inject(LLMServerService) private llmServerService: LLMServerService) {
+  constructor(
+    @inject(LLMServerService) private llmServerService: LLMServerService,
+    @inject(TokenStatsService) private tokenStatsService: TokenStatsService
+  ) {
     this.disposable = this.llmServerService.onDidChange(() => {
       this.buildServerProvider();
     });
     this.buildServerProvider();
   }
 
-  get lastModel() {
-    return this.#lastModel;
-  }
-
   get servers() {
     return this.#servers;
   }
 
-  async chatCompletion(messages: ChatMessage[], signal?: AbortSignal): Promise<string> {
+  async chatCompletion(
+    messages: ChatMessage[],
+    signal?: AbortSignal
+  ): Promise<{ text: string; model: ModelConfig; usage?: TokenUsage }> {
     if (this.#servers.length === 0) {
       throw new Error(
         `No AI servers configured. Please configure at least one server in ${NAME}.servers.`
@@ -58,9 +63,18 @@ export class ProviderService implements vscode.Disposable {
         clearTimeout(timer);
         server.provider.afterChatCompletion?.(rawResponse, server.modelConfig);
 
-        this.#lastModel = server.modelConfig;
         console.info(`use [${server.label}] success`);
-        return server.provider.extractText(rawResponse);
+        const text = server.provider.extractText(rawResponse);
+        const usage = server.provider.extractUsage(rawResponse);
+
+        this.tokenStatsService.recordUsage(
+          server.providerKey,
+          server.modelConfig.name,
+          usage.inputTokens ?? 0,
+          usage.outputTokens ?? 0
+        );
+
+        return { text, usage, model: server.modelConfig };
       } catch (err) {
         clearTimeout(timer);
 
@@ -102,7 +116,8 @@ export class ProviderService implements vscode.Disposable {
         provider,
         modelConfig: server.model,
         timeout: server.config.timeout,
-        label: server.label
+        label: server.label,
+        providerKey: createProviderKey(server.config)
       };
     });
   }

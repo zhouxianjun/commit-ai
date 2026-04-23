@@ -16,3 +16,6 @@ export function createProvider(config: ProviderConfig): AIProvider {
 }
 
 export type { AIProvider, ChatMessage } from './types';
+
+export const createProviderKey = (provider: ProviderConfig) =>
+  `${provider.type}|${provider.baseURL || ''}`;

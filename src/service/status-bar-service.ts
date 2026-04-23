@@ -72,9 +72,9 @@ export class StatusBarService implements vscode.Disposable {
       return num.toString();
     }
     if (num < 1000000) {
-      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+      return (num / 1000).toFixed(2).replace(/\.0$/, '') + 'k';
     }
-    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'm';
+    return (num / 1000000).toFixed(2).replace(/\.0$/, '') + 'm';
   }
 
   private formatTooltip(state: TokenState, config: StatusConfig): vscode.MarkdownString {

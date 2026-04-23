@@ -67,6 +67,12 @@
         <span class="text-[10px] uppercase font-bold tracking-widest">Total Models</span>
         <span class="text-2xl font-black text-primary">{{ providersStore.totalModels }}</span>
       </div>
+      <div class="flex flex-col gap-2">
+        <span class="text-[10px] uppercase font-bold tracking-widest">Total Tokens</span>
+        <span class="text-2xl font-black text-primary uppercase">{{
+          formatToken(totalTokens)
+        }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -79,6 +85,8 @@ import Provider from './__components__/provider.vue';
 import { VueDraggable } from 'vue-draggable-plus';
 import { useProviders } from '@/store/provides';
 import { cloneDeep } from 'lodash-es';
+import { computed } from 'vue';
+import { formatToken } from '@/utils';
 
 const presets: PresetType[] = [
   {
@@ -118,6 +126,13 @@ const presets: PresetType[] = [
 ];
 
 const providersStore = useProviders();
+
+const totalTokens = computed(() =>
+  Array.from(providersStore.providerStats.values()).reduce(
+    (acc, stat) => acc + stat.totalUsage.inputTokens + stat.totalUsage.outputTokens,
+    0
+  )
+);
 
 providersStore.refresh();
 

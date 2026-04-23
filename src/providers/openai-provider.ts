@@ -73,4 +73,11 @@ export class OpenAIProvider implements AIProvider<ChatCompletion> {
     }
     return content;
   }
+
+  extractUsage(response: ChatCompletion): { inputTokens?: number; outputTokens?: number } {
+    return {
+      inputTokens: response.usage?.prompt_tokens,
+      outputTokens: response.usage?.completion_tokens
+    };
+  }
 }
