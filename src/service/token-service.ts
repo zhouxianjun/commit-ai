@@ -74,7 +74,7 @@ export class TokenService implements vscode.Disposable {
     }
     const model = this.providerService.lastModel ?? servers[0].model;
     const limit =
-      this.modelContextService.getContextWindowLimit(model.name) ?? model.maxInputTokens;
+      model.maxInputTokens ?? this.modelContextService.getContextWindowLimit(model.name);
     const tokenCountMode = this.configService.getConfig<TokenCountMode>(
       ConfigKeys.TOKEN_COUNT_MODE
     );
