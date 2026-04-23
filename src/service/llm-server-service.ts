@@ -34,6 +34,25 @@ export class LLMServerService implements vscode.Disposable {
     return this.servers;
   }
 
+  updateServer(index: number, config: ServerConfig) {
+    const servers = this.configService.getConfig<ServerConfig[]>(ConfigKeys.SERVERS, []);
+    if (!servers[index]) {
+      servers.push(config);
+    } else {
+      servers[index] = config;
+    }
+    this.configService.updateConfig(ConfigKeys.SERVERS, servers);
+  }
+
+  deleteServer(index: number) {
+    const servers = this.configService.getConfig<ServerConfig[]>(ConfigKeys.SERVERS, []);
+    if (!servers[index]) {
+      throw new Error('Invalid index');
+    }
+    servers.splice(index, 1);
+    this.configService.updateConfig(ConfigKeys.SERVERS, servers);
+  }
+
   private buildServers() {
     const configs = this.configService.getConfig<ServerConfig[]>(ConfigKeys.SERVERS, []);
     const globalTimeout = this.configService.getConfig<number>(ConfigKeys.TIMEOUT, 60000);

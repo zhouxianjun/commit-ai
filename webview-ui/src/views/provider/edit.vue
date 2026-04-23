@@ -3,11 +3,25 @@
     <div class="p-[32px] flex-1 flex flex-col gap-8">
       <div class="text-3xl font-bold text-foreground">Edit AI Provider</div>
       <div class="flex flex-col gap-6">
-        <div class="flex items-center gap-2">
-          <Settings />
-          <span class="text-sm font-bold text-foreground">Provider Settings</span>
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-2">
+            <Settings />
+            <span class="text-sm font-bold text-foreground">Provider Settings</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <ModelDialog
+              :available-models="availableModels"
+              :models="models"
+              @selected="handleSelectedModels"
+            >
+              <Button variant="default" :disabled="!availableModels.length">
+                <Plus />
+                ADD MODEL
+              </Button>
+            </ModelDialog>
+          </div>
         </div>
-        <form class="grid grid-cols-2 gap-6 items-start" @submit.prevent="onSubmit">
+        <div class="grid grid-cols-2 gap-6 items-start">
           <FormField v-slot="{ componentField }" name="type">
             <FormItem class="flex-1">
               <FormLabel class="text-foreground/50">Provider type</FormLabel>
@@ -102,21 +116,27 @@
               <FormMessage />
             </FormItem>
           </FormField>
-        </form>
+        </div>
       </div>
       <div class="flex flex-1 flex-col gap-4 overflow-y-auto">
-        <Model v-for="model of models" :key="model.name" :model="model" />
+        <Model
+          v-for="model of models"
+          :key="model.name"
+          :model="model"
+          @delete="handleDeleteModel"
+        />
       </div>
     </div>
 
     <div class="px-[32px] flex justify-between items-center">
-      <Button variant="secondary" class="rounded-none px-8!">
-        <Gauge class="text-primary" />
-        TEST CONNECTION
+      <Button variant="secondary" class="rounded-none px-8!" @click="test()">
+        <Spinner v-if="isTestLoading" />
+        <Gauge v-else class="text-primary" />
+        TEST & FETCH MODELS
       </Button>
       <div class="flex items-center gap-4">
         <Button variant="outline" class="rounded-none" @click="$router.back()">Cancel</Button>
-        <Button variant="default" class="rounded-none" @click="onSubmit">Save</Button>
+        <Button variant="default" class="rounded-none" @click="save">Save</Button>
       </div>
     </div>
   </div>
@@ -139,38 +159,43 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { NumberField, NumberFieldContent, NumberFieldInput } from '@/components/ui/number-field';
+import { Spinner } from '@/components/ui/spinner';
 import { useProviders } from '@/store/provides';
 import { computed, ref } from 'vue';
 import Model from './__components__/model.vue';
-import type { ModelConfig } from '@shared-types/shared';
-import { isNil } from 'lodash-es';
+import type { ModelConfig, ProviderConfig, ServerConfig } from '@shared-types/shared';
+import { cloneDeep, isNil } from 'lodash-es';
 import { useDefaultConfig } from '@/composables/use-default-config';
 import { Checkbox } from '@/components/ui/checkbox';
+import ModelDialog from './__components__/model-dialog.vue';
+import { useProviderModels } from '@/composables/use-provider-models';
+import { useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 
 const props = defineProps<{
   index?: number;
 }>();
 
+const router = useRouter();
 const providerStore = useProviders();
+const { models: availableModels, isLoading: isTestLoading, fetchModels } = useProviderModels();
 
 const provider = computed(() =>
   !isNil(props.index) ? providerStore.providers[props.index] : undefined
 );
-const schema = toTypedSchema(
-  z.object({
-    type: z.enum(['openai', 'gemini', 'azure']),
-    baseURL: z.string().url(),
-    apiKey: z.string().optional(),
-    apiVersion: z.string().optional(),
-    timeout: z.coerce.number().min(0).optional()
-  })
-);
+const models = ref<ModelConfig[]>(provider.value?.models ?? []);
+
+const schema = z.object({
+  type: z.enum(['openai', 'azure', 'gemini']),
+  baseURL: z.union([z.string().url(), z.literal('')]).optional(),
+  apiKey: z.string().min(1, 'Please provide an API key'),
+  apiVersion: z.string().optional(),
+  timeout: z.coerce.number().min(0).optional()
+});
 const form = useForm({
-  validationSchema: schema,
+  validationSchema: toTypedSchema(schema),
   initialValues: {
     type: 'openai',
-    baseURL: '',
-    apiKey: '',
     ...provider.value
   }
 });
@@ -181,9 +206,34 @@ const { override: overrideTimeout, value: timeout } = useDefaultConfig({
   defaultValue: 30000
 });
 
-const models = ref<ModelConfig[]>(provider.value?.models ?? []);
-
-const onSubmit = form.handleSubmit((values) => {
-  console.log(values);
-});
+const handleSelectedModels = (selectedModels: ModelConfig[]) => {
+  models.value.push(...selectedModels);
+};
+const handleDeleteModel = (model: ModelConfig) => {
+  models.value = models.value.filter((m) => m.name !== model.name);
+};
+const test = async () => {
+  const result = await form.validate();
+  if (result.valid && result.values) {
+    toast.promise(fetchModels(result.values as ProviderConfig), {
+      loading: 'Testing provider...',
+      success: 'Provider tested successfully!',
+      error: (e: any) => e.error?.message ?? e.message ?? 'Failed to test provider'
+    });
+  }
+};
+const save = async () => {
+  const result = await form.validate();
+  if (!result.valid) {
+    return;
+  }
+  await providerStore.updateProvider(
+    props.index ?? -1,
+    cloneDeep({
+      ...form.values,
+      models: models.value
+    }) as ServerConfig
+  );
+  router.back();
+};
 </script>

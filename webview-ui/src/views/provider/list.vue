@@ -8,10 +8,6 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <Button variant="secondary">
-          <Gauge />
-          TEST ALL
-        </Button>
         <Button variant="default" @click="$router.push('/add')">
           <Plus />
           ADD PROVIDER
@@ -75,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { Gauge, Plus } from 'lucide-vue-next';
+import { Plus } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import Preset, { type Preset as PresetType } from './__components__/preset.vue';
 import Provider from './__components__/provider.vue';
@@ -123,7 +119,8 @@ const providersStore = useProviders();
 
 providersStore.refresh();
 
-const handleDelete = (index: number) => {
-  console.log('delete', index);
+const handleDelete = async (index: number) => {
+  await providersStore.deleteProvider(index);
+  providersStore.refresh();
 };
 </script>

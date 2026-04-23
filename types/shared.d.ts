@@ -24,14 +24,11 @@ export interface ServerConfig extends ProviderConfig {
 export type InvokeMap = {
   getConfiguration: { request: void; response: Record<string, unknown> };
   listProviders: { request: void; response: ServerConfig[] };
-  addProvider: { request: ServerConfig; response: void };
   updateProvider: {
     request: { index: number; config: ServerConfig };
     response: void;
   };
   deleteProvider: { request: number; response: void };
-  testProvider: { request: ServerConfig; response: boolean };
-  testAllProviders: { request: void; response: boolean[] };
   fetchModels: { request: ProviderConfig; response: Promise<string[]> };
   fetchDomainIcon: { request: string; response: Promise<string | null> };
   getBuiltinModelConfig: { request: string; response: BuiltinModelConfig | undefined };

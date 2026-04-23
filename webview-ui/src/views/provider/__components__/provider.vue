@@ -11,11 +11,13 @@
       </div>
     </div>
     <div class="flex items-center gap-2">
-      <Button variant="outline">
+      <Button variant="outline" @click="test">
         <Gauge />
       </Button>
       <Button variant="outline" @click="$router.push(`/edit/${props.index}`)">
-        <span class="text-xl font-black text-primary">{{ activeModels.length }}</span>
+        <span class="text-lg font-black text-primary">{{ activeModels.length }}</span>
+        <span class="text-xs">/</span>
+        <span class="text-xs">{{ config.models?.length }}</span>
       </Button>
       <AlertDialog>
         <AlertDialogTrigger>
@@ -57,6 +59,8 @@ import {
   AlertDialogCancel,
   AlertDialogAction
 } from '@/components/ui/alert-dialog';
+import { toast } from 'vue-sonner';
+import { useProviderModels } from '@/composables/use-provider-models';
 
 const emit = defineEmits<{
   delete: [index: number];
@@ -67,4 +71,13 @@ const props = defineProps<{
 }>();
 
 const { name, icon, activeModels } = useProvider(props.config);
+const { fetchModels } = useProviderModels();
+
+const test = () => {
+  toast.promise(() => fetchModels(props.config), {
+    loading: 'Testing provider...',
+    success: 'Provider test passed!',
+    error: (e: any) => e.error?.message ?? e.message ?? 'Failed to test provider'
+  });
+};
 </script>

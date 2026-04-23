@@ -7,6 +7,8 @@ import { getHtmlForWebview } from '../utils/webview';
 import type { InvokeRequest, InvokeResponse } from '../../types/shared';
 import { fetchFavicon } from '../utils/utils';
 import { ModelContextService } from './model-context';
+import { ProviderService } from './provider-service';
+import { LLMServerService } from './llm-server-service';
 
 @injectable()
 export class WebviewService implements vscode.Disposable {
@@ -16,11 +18,17 @@ export class WebviewService implements vscode.Disposable {
   constructor(
     @inject(Context) private context: vscode.ExtensionContext,
     @inject(ConfigService) private configService: ConfigService,
-    @inject(ModelContextService) private modelContextService: ModelContextService
+    @inject(ModelContextService) private modelContextService: ModelContextService,
+    @inject(ProviderService) private providerService: ProviderService,
+    @inject(LLMServerService) private llmServerService: LLMServerService
   ) {
     this.registerCommand('listProviders', () => {
       return this.configService.getConfig(ConfigKeys.SERVERS);
     });
+    this.registerCommand('updateProvider', (args) =>
+      this.llmServerService.updateServer(args.index, args.config)
+    );
+    this.registerCommand('deleteProvider', (index) => this.llmServerService.deleteServer(index));
     this.registerCommand('getConfiguration', () =>
       JSON.parse(JSON.stringify(this.configService.getConfiguration()))
     );
@@ -28,6 +36,7 @@ export class WebviewService implements vscode.Disposable {
     this.registerCommand('getBuiltinModelConfig', (name: string) =>
       this.modelContextService.getModelConfig(name)
     );
+    this.registerCommand('fetchModels', (provider) => this.providerService.listModels(provider));
   }
 
   public async openSettings() {
