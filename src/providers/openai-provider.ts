@@ -1,29 +1,22 @@
-import OpenAI from 'openai';
+import OpenAI, { type ClientOptions } from 'openai';
 import {
   ChatCompletion,
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionMessageParam
 } from 'openai/resources';
 import { AIProvider, ChatMessage } from './types';
-import type { ModelConfig, ServerConfig } from '../../types/shared';
+import type { ModelConfig, ProviderConfig } from '../../types/shared';
 
 export class OpenAIProvider implements AIProvider<ChatCompletion> {
   readonly type = 'openai';
   private client: OpenAI;
 
-  constructor(private config: ServerConfig) {
-    const clientConfig: {
-      apiKey: string;
-      baseURL?: string;
-      defaultQuery?: { 'api-version': string };
-      defaultHeaders?: { 'api-key': string };
-    } = {
-      apiKey: config.apiKey
+  constructor(private config: ProviderConfig) {
+    const clientConfig: ClientOptions = {
+      apiKey: config.apiKey,
+      baseURL: config.baseURL,
+      timeout: config.timeout
     };
-
-    if (config.baseURL) {
-      clientConfig.baseURL = config.baseURL;
-    }
 
     if (config.type === 'azure' && config.apiVersion) {
       clientConfig.defaultQuery = { 'api-version': config.apiVersion };
@@ -31,6 +24,15 @@ export class OpenAIProvider implements AIProvider<ChatCompletion> {
     }
 
     this.client = new OpenAI(clientConfig);
+  }
+
+  async listModels(): Promise<string[]> {
+    const models = await this.client.models.list({
+      query: {
+        output_modalities: 'text'
+      }
+    });
+    return models.data.map((model) => model.id);
   }
 
   async chatCompletion(

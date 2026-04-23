@@ -54,6 +54,7 @@
             :config="provider"
             :index="index"
             class="cursor-move"
+            @delete="handleDelete"
           />
         </VueDraggable>
       </div>
@@ -121,4 +122,8 @@ const presets: PresetType[] = [
 const providersStore = useProviders();
 
 providersStore.refresh();
+
+const handleDelete = (index: number) => {
+  console.log('delete', index);
+};
 </script>

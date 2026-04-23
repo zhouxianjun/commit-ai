@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { LLMServerService } from './llm-server-service';
 import { createProvider, type AIProvider, type ChatMessage } from '../providers';
 import { NAME, DISPLAY_NAME } from '../consts';
-import type { ModelConfig } from '../../types/shared';
+import type { ModelConfig, ProviderConfig } from '../../types/shared';
 import * as vscode from 'vscode';
 
 @injectable()
@@ -87,6 +87,11 @@ export class ProviderService implements vscode.Disposable {
     }
 
     throw new Error(`All ${this.#servers.length} server(s) failed:\n${errors.join('\n')}`);
+  }
+
+  async listModels(config: ProviderConfig) {
+    const provider = createProvider(config);
+    return provider.listModels();
   }
 
   private buildServerProvider() {

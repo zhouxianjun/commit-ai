@@ -33,7 +33,7 @@
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction @click="handleDelete">Continue</AlertDialogAction>
+            <AlertDialogAction @click="emit('delete', index)">Continue</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -58,14 +58,13 @@ import {
   AlertDialogAction
 } from '@/components/ui/alert-dialog';
 
+const emit = defineEmits<{
+  delete: [index: number];
+}>();
 const props = defineProps<{
   config: ServerConfig;
   index: number;
 }>();
 
 const { name, icon, activeModels } = useProvider(props.config);
-
-const handleDelete = () => {
-  console.log('delete');
-};
 </script>

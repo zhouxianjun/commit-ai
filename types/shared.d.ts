@@ -10,12 +10,14 @@ export interface ModelConfig {
   options?: Record<string, unknown>;
 }
 
-export interface ServerConfig {
+export interface ProviderConfig {
   type: 'openai' | 'gemini' | 'azure';
-  baseURL: string;
   apiKey: string;
+  baseURL?: string;
   apiVersion?: string;
   timeout?: number;
+}
+export interface ServerConfig extends ProviderConfig {
   models: ModelConfig[];
 }
 
@@ -30,7 +32,7 @@ export type InvokeMap = {
   deleteProvider: { request: number; response: void };
   testProvider: { request: ServerConfig; response: boolean };
   testAllProviders: { request: void; response: boolean[] };
-  fetchModels: { request: string; response: ModelConfig[] };
+  fetchModels: { request: ProviderConfig; response: Promise<string[]> };
   fetchDomainIcon: { request: string; response: Promise<string | null> };
   getBuiltinModelConfig: { request: string; response: BuiltinModelConfig | undefined };
 };

@@ -1,20 +1,40 @@
-import { GoogleGenerativeAI, GenerateContentResult } from '@google/generative-ai';
 import { AIProvider, ChatMessage } from './types';
-import type { ModelConfig, ServerConfig } from '../../types/shared';
+import type { ModelConfig, ProviderConfig } from '../../types/shared';
+import {
+  GoogleGenAI,
+  ThinkingLevel,
+  type GenerateContentConfig,
+  type GenerateContentResponse,
+  type GoogleGenAIOptions
+} from '@google/genai';
+import type { ReasoningEffort } from 'openai/resources';
 
-export class GeminiProvider implements AIProvider<GenerateContentResult> {
+export class GeminiProvider implements AIProvider<GenerateContentResponse> {
   readonly type = 'gemini';
-  private client: GoogleGenerativeAI;
+  private client: GoogleGenAI;
 
-  constructor(private config: ServerConfig) {
-    this.client = new GoogleGenerativeAI(config.apiKey);
+  constructor(private config: ProviderConfig) {
+    const cfg: GoogleGenAIOptions = {
+      apiKey: config.apiKey,
+      apiVersion: config.apiVersion,
+      httpOptions: {
+        baseUrl: config.baseURL,
+        timeout: config.timeout
+      }
+    };
+    this.client = new GoogleGenAI(cfg);
+  }
+
+  async listModels(): Promise<string[]> {
+    const models = await this.client.models.list({});
+    return models.page.map((model) => model.name);
   }
 
   async chatCompletion(
     messages: ChatMessage[],
     modelConfig: ModelConfig,
     signal?: AbortSignal
-  ): Promise<GenerateContentResult> {
+  ): Promise<GenerateContentResponse> {
     const generationConfig: {
       temperature: number;
       thinkingConfig: { thinkingBudget: number };
@@ -27,45 +47,48 @@ export class GeminiProvider implements AIProvider<GenerateContentResult> {
       generationConfig.maxOutputTokens = modelConfig.maxTokens;
     }
 
-    const model = this.client.getGenerativeModel({ model: modelConfig.name });
-    const contents = messages.map((msg) => msg.content);
+    const requestParams: GenerateContentConfig = {
+      abortSignal: signal,
+      httpOptions: { timeout: this.config.timeout },
+      temperature: modelConfig.temperature,
+      maxOutputTokens: modelConfig.maxTokens,
+      thinkingConfig:
+        modelConfig.reasoningEffort === 'none'
+          ? { thinkingBudget: 0 }
+          : {
+              thinkingBudget: -1,
+              thinkingLevel: this.transformThinkLevel(modelConfig.reasoningEffort)
+            }
+    };
 
-    const chat = model.startChat({ generationConfig });
-    const sendPromise = chat.sendMessage(contents);
-
-    return signal ? this.withAbort(sendPromise, signal) : sendPromise;
+    return this.client.models.generateContent({
+      model: modelConfig.name,
+      contents: messages,
+      config: requestParams
+    });
   }
 
-  extractText(response: GenerateContentResult): string {
-    const text = response.response.text();
+  extractText(response: GenerateContentResponse): string {
+    const text = response.text;
     if (!text) {
       throw new Error('Gemini returned empty response');
     }
     return text;
   }
 
-  private withAbort<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      if (signal.aborted) {
-        reject(signal.reason);
-        return;
-      }
-
-      const onAbort = () => {
-        reject(signal.reason);
-      };
-      signal.addEventListener('abort', onAbort, { once: true });
-
-      promise.then(
-        (value) => {
-          signal.removeEventListener('abort', onAbort);
-          resolve(value);
-        },
-        (err) => {
-          signal.removeEventListener('abort', onAbort);
-          reject(err);
-        }
-      );
-    });
+  private transformThinkLevel(effort: ReasoningEffort) {
+    if (effort === 'minimal') {
+      return ThinkingLevel.MINIMAL;
+    }
+    if (effort === 'low') {
+      return ThinkingLevel.LOW;
+    }
+    if (effort === 'medium') {
+      return ThinkingLevel.MEDIUM;
+    }
+    if (effort === 'high') {
+      return ThinkingLevel.HIGH;
+    }
+    return ThinkingLevel.LOW;
   }
 }

@@ -1,5 +1,6 @@
 import type { InvokeRequest, InvokeResponse } from '@shared-types/shared';
 import { createGlobalState } from '@vueuse/core';
+import { onScopeDispose } from 'vue';
 
 let invokeId = 0;
 const invokeMap = new Map<
@@ -37,6 +38,10 @@ export const useVSCode = createGlobalState(() => {
   };
 
   window.addEventListener('message', handleMessage);
+
+  onScopeDispose(() => {
+    window.removeEventListener('message', handleMessage);
+  });
 
   return {
     invoke

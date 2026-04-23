@@ -31,7 +31,7 @@
           </div>
           <Slider
             v-model="temperatureSlider"
-            :min="0"
+            :min="0.1"
             :max="2"
             :step="0.1"
             :disabled="!overrideTemperature"
@@ -108,7 +108,7 @@
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>Continue</AlertDialogAction>
+            <AlertDialogAction @click="emit('delete', model)">Continue</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -146,6 +146,9 @@ import type { ModelConfig } from '@shared-types/shared';
 import { Trash } from 'lucide-vue-next';
 import { computed } from 'vue';
 
+const emit = defineEmits<{
+  delete: [model: ModelConfig];
+}>();
 const props = defineProps<{
   model: ModelConfig;
 }>();

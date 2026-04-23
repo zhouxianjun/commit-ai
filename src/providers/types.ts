@@ -1,4 +1,4 @@
-import type { ModelConfig } from '../service/llm-server-service';
+import type { ModelConfig } from '../../types/shared';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -15,4 +15,6 @@ export interface AIProvider<T = unknown> {
   extractText(response: T): string;
   beforeChatCompletion?: (messages: ChatMessage[], modelConfig: ModelConfig) => ChatMessage[];
   afterChatCompletion?: (response: T, modelConfig: ModelConfig) => void;
+
+  listModels(): Promise<string[]>;
 }

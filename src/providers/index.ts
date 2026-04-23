@@ -1,9 +1,9 @@
 import { AIProvider } from './types';
 import { OpenAIProvider } from './openai-provider';
 import { GeminiProvider } from './gemini-provider';
-import type { ServerConfig } from '../../types/shared';
+import type { ProviderConfig } from '../../types/shared';
 
-export function createProvider(config: ServerConfig): AIProvider {
+export function createProvider(config: ProviderConfig): AIProvider {
   switch (config.type) {
     case 'openai':
     case 'azure':

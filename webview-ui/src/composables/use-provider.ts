@@ -65,13 +65,19 @@ const providers = [
     regex: [/http[s]?:\/\/api\.openai\.com/]
   }
 ];
+const defaultBaseURL = {
+  openai: 'https://api.openai.com',
+  gemini: 'https://generativelanguage.googleapis.com',
+  azure: ''
+};
 
 export const useProvider = (server: ServerConfig) => {
   const provider = getProvider(server);
   const icon = shallowRef<string | null>(provider.icon);
   const { invoke } = useVSCode();
-  if (!provider.icon) {
-    const url = new URL(server.baseURL);
+  const baseURL = server.baseURL || defaultBaseURL[server.type];
+  if (!provider.icon && baseURL) {
+    const url = new URL(baseURL);
     invoke('fetchDomainIcon', url.hostname).then((base64) => {
       icon.value = base64;
     });
@@ -87,11 +93,18 @@ export const useProvider = (server: ServerConfig) => {
 };
 
 const getProvider = (server: ServerConfig) => {
+  const baseURL = server.baseURL || defaultBaseURL[server.type];
   const item = providers.find((provider) => {
-    return provider.regex.some((regex) => regex.test(server.baseURL));
+    return provider.regex.some((regex) => regex.test(baseURL));
   });
   if (!item) {
-    const url = new URL(server.baseURL);
+    if (!baseURL) {
+      return {
+        name: server.type,
+        icon: ''
+      };
+    }
+    const url = new URL(baseURL);
     const name = url.hostname.split('.').at(-2) || url.hostname;
     return {
       name,
