@@ -1,5 +1,5 @@
 import type { ReasoningEffort } from 'openai/resources';
-import type { ModelConfig as BuiltinModelConfig } from '../src/service/model-context';
+import type { ModelConfig as BuiltinModelConfig } from '../scripts/model';
 export interface ModelConfig {
   name: string;
   enabled?: boolean;

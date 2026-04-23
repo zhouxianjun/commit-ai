@@ -2,16 +2,14 @@ import { inject, injectable } from 'inversify';
 import * as vscode from 'vscode';
 import BUILTIN_MODEL_CONTEXT from '../../../data/model-config.json';
 import { Context } from '../../consts';
-import { fetchRemoteModelContext } from '../../../scripts/model.js';
+import { fetchRemoteModelContext } from '../../../scripts/model';
+import type { ModelConfig } from '../../../scripts/model';
 
 const CACHE_KEY = 'modelContextCache_v2';
 const CACHE_TIMESTAMP_KEY = 'modelContextCacheTimestamp_v2';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
-export interface ModelConfig {
-  max_tokens?: number;
-  max_input_token?: number;
-}
+
 
 interface ModelContextCache {
   [modelName: string]: ModelConfig;

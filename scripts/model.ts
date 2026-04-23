@@ -5,7 +5,16 @@ const LITELLM_JSON_URL =
   'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
 const OPENROUTER_JSON_URL = 'https://openrouter.ai/api/v1/models?output_modalities=text';
 
-function fetchJson(url) {
+export interface ModelConfig {
+  max_tokens?: number;
+  max_input_token?: number;
+}
+
+export interface ModelContext {
+  [modelName: string]: ModelConfig;
+}
+
+function fetchJson(url: string): Promise<any> {
   return new Promise((resolve, reject) => {
     https
       .get(url, (res) => {
@@ -27,18 +36,19 @@ function fetchJson(url) {
   });
 }
 
-function processLiteLLMModels(data) {
-  const result = {};
+function processLiteLLMModels(data: any): ModelContext {
+  const result: ModelContext = {};
   for (const [modelName, config] of Object.entries(data)) {
     if (typeof config !== 'object' || config === null) {
       continue;
     }
-    if (config.mode !== 'chat') {
+    const c = config as any;
+    if (c.mode !== 'chat') {
       continue;
     }
 
-    const max_tokens = config.max_tokens || config.max_output_tokens;
-    const max_input_token = config.max_input_tokens;
+    const max_tokens = c.max_tokens || c.max_output_tokens;
+    const max_input_token = c.max_input_tokens;
 
     if (max_tokens || max_input_token) {
       result[modelName] = {
@@ -50,8 +60,8 @@ function processLiteLLMModels(data) {
   return result;
 }
 
-function processOpenRouterModels(data) {
-  const result = {};
+function processOpenRouterModels(data: any): ModelContext {
+  const result: ModelContext = {};
   if (!data || !Array.isArray(data.data)) {
     return result;
   }
@@ -71,15 +81,16 @@ function processOpenRouterModels(data) {
   return result;
 }
 
-export async function fetchRemoteModelContext() {
+export async function fetchRemoteModelContext(): Promise<ModelContext | null> {
   try {
     const [liteData, orData] = await Promise.all([
       fetchJson(LITELLM_JSON_URL).catch((err) => {
-        console.error('LiteLLM fetch failed:', err.message);
+        console.error('LiteLLM fetch failed:', (err as Error).message);
         return {};
       }),
       fetchJson(OPENROUTER_JSON_URL).catch((err) => {
-        console.error('OpenRouter fetch failed:', err.message);
+        console.error('OpenRouter fetch failed:', (err as Error).message);
+        return {};
       })
     ]);
 

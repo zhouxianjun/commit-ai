@@ -33,7 +33,7 @@
     "package": "vsce package --no-dependencies",
     "publish": "vsce publish --no-dependencies",
     "release": "node scripts/release.js",
-    "update-model-config": "node scripts/update-model-config.js",
+    "update-model-config": "tsx scripts/update-model-config.ts",
     "vscode:prepublish": "pnpm run build && pnpm run webview:build",
     "watch": "tsdown --watch",
     "webview:build": "cd webview-ui && pnpm build",
@@ -66,6 +66,7 @@
     "mocha": "^10.2.0",
     "oxfmt": "^0.43.0",
     "tsdown": "^0.21.7",
+    "tsx": "^4.19.3",
     "typescript": "^5.9.3"
   },
   "resolutions": {
