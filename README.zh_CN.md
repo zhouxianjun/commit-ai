@@ -68,7 +68,7 @@
 1. **配置服务**: 在命令面板 (`Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows) 中搜索并执行 `CommitAI: AI Server Settings` 进入可视化配置页面。也可以在 VS Code 设置中找到 `commit-ai.servers` 点击提示链接进入。
 2. **暂存更改**: 在 Git 面板中将修改的文件 `git add` 到暂存区。
 3. **输入引导 (可选)**: 如果有特殊说明，可以在提交框先写一段话。
-4. **一键生成**: 点击提交框右上角的 `$(sparkle)`（或 CommitAI）图标。
+4. **一键生成**: 点击提交框右上角的 <img height="16" src="https://github.com/zhouxianjun/commit-ai/blob/main/images/logo.png?raw=true"> 图标。
 5. **确认提交**: 确认生成的描述无误后，点击勾选提交。
 
 ## ⚙️ 详细配置项

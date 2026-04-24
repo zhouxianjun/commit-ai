@@ -68,7 +68,7 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
 1. **Configure Servers**: Open the Command Palette (`Cmd+Shift+P` on Mac, `Ctrl+Shift+P` on Windows) and run `CommitAI: AI Server Settings`. Alternatively, search for `commit-ai.servers` in VS Code settings and click the configuration link.
 2. **Stage Changes**: Run `git add` for the files you wish to commit.
 3. **Provide Context (Optional)**: Type some brief notes in the Source Control message box if you want to guide the AI.
-4. **Generate**: Click the `$(sparkle)` (or CommitAI) icon button in the Source Control title bar.
+4. **Generate**: Click the <img height="16" src="https://github.com/zhouxianjun/commit-ai/blob/main/images/logo.png?raw=true"> icon button in the Source Control title bar.
 5. **Commit**: Review the generated message and click the checkmark to commit.
 
 ## ⚙️ Configuration Details
