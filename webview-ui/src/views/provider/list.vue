@@ -27,10 +27,9 @@
       <div class="mt-4 flex items-center gap-4">
         <Preset
           v-for="preset of presets"
+          v-bind="preset"
           :key="preset.name"
-          :name="preset.name"
-          :description="preset.description"
-          :config="preset.config"
+          @click="$router.push({ path: '/add', query: { preset: preset.name } })"
         />
       </div>
     </div>
@@ -83,50 +82,14 @@
 <script setup lang="ts">
 import { Plus, RefreshCcw } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
-import Preset, { type Preset as PresetType } from './__components__/preset.vue';
+import Preset from './__components__/preset.vue';
 import Provider from './__components__/provider.vue';
 import { VueDraggable } from 'vue-draggable-plus';
 import { useProviders } from '@/store/provides';
 import { cloneDeep } from 'lodash-es';
 import { computed } from 'vue';
 import { formatToken } from '@/utils';
-
-const presets: PresetType[] = [
-  {
-    name: 'OpenRouter',
-    description: 'Free and open-source AI model provider',
-    config: {
-      type: 'openai',
-      baseURL: 'https://openrouter.ai/api/v1',
-      models: [
-        {
-          name: 'openrouter/free',
-          enabled: true,
-          reasoningEffort: 'low',
-          temperature: 0.7
-        }
-      ]
-    }
-  },
-  {
-    name: 'NVIDIA Build',
-    description: 'Try NVIDIA NIM APIs',
-    config: {
-      type: 'openai',
-      baseURL: 'https://integrate.api.nvidia.com/v1',
-      models: []
-    }
-  },
-  {
-    name: 'Github',
-    description: 'Github Copilot Models',
-    config: {
-      type: 'openai',
-      baseURL: 'https://models.github.ai/inference',
-      models: []
-    }
-  }
-];
+import { presets } from '@/utils/provider';
 
 const providersStore = useProviders();
 

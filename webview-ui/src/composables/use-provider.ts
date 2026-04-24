@@ -1,70 +1,8 @@
-import openrouter from '@/assets/logo/openrouter.png?inline';
-import nvidia from '@/assets/logo/nvidia.png?inline';
-import github from '@/assets/logo/github.svg?inline';
-import anthropic from '@/assets/logo/anthropic.svg?inline';
-import deepseek from '@/assets/logo/DeepSeek.png?inline';
-import zAI from '@/assets/logo/zhipu.png?inline';
-import aliyun from '@/assets/logo/Qwen.png?inline';
-import gemini from '@/assets/logo/GoogleGemini.svg?inline';
-import xAI from '@/assets/logo/xAI.png?inline';
-import openAI from '@/assets/logo/OpenAI.svg?inline';
-
 import type { ServerConfig } from '@shared-types/shared';
 import { computed, shallowRef } from 'vue';
 import { useVSCode } from './use-vscode';
+import { getProviderConfig } from '@/utils/provider';
 
-const providers = [
-  {
-    name: 'OpenRouter',
-    icon: openrouter,
-    regex: [/http[s]?:\/\/openrouter\.ai/]
-  },
-  {
-    name: 'NVIDIA Build',
-    icon: nvidia,
-    regex: [/http[s]?:\/\/integrate\.api\.nvidia\.com/]
-  },
-  {
-    name: 'Github',
-    icon: github,
-    regex: [/http[s]?:\/\/models\.github\.ai/]
-  },
-  {
-    name: 'Anthropic',
-    icon: anthropic,
-    regex: [/http[s]?:\/\/api\.anthropic\.com/]
-  },
-  {
-    name: 'DeepSeek',
-    icon: deepseek,
-    regex: [/http[s]?:\/\/api\.deepseek\.com/]
-  },
-  {
-    name: 'Z.ai',
-    icon: zAI,
-    regex: [/http[s]?:\/\/open\.bigmodel\.cn/]
-  },
-  {
-    name: 'Alibaba Cloud Int',
-    icon: aliyun,
-    regex: [/http[s]?:\/\/dashscope\.aliyuncs\.com/]
-  },
-  {
-    name: 'Google',
-    icon: gemini,
-    regex: [/http[s]?:\/\/generativelanguage\.googleapis\.com/]
-  },
-  {
-    name: 'xAI',
-    icon: xAI,
-    regex: [/http[s]?:\/\/api\.x\.ai/]
-  },
-  {
-    name: 'OpenAI',
-    icon: openAI,
-    regex: [/http[s]?:\/\/api\.openai\.com/]
-  }
-];
 const defaultBaseURL = {
   openai: 'https://api.openai.com',
   gemini: 'https://generativelanguage.googleapis.com',
@@ -94,9 +32,7 @@ export const useProvider = (server: ServerConfig) => {
 
 const getProvider = (server: ServerConfig) => {
   const baseURL = server.baseURL || defaultBaseURL[server.type];
-  const item = providers.find((provider) => {
-    return provider.regex.some((regex) => regex.test(baseURL));
-  });
+  const item = getProviderConfig(server.type, server.baseURL);
   if (!item) {
     if (!baseURL) {
       return {

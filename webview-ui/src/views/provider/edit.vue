@@ -44,7 +44,16 @@
           </FormField>
           <FormField v-slot="{ componentField }" name="baseURL">
             <FormItem class="flex-1">
-              <FormLabel class="text-foreground/50">Base URL</FormLabel>
+              <FormLabel class="text-foreground/50 flex justify-between">
+                <span>Base URL</span>
+                <a
+                  v-if="providerConfig?.website"
+                  :href="providerConfig.website"
+                  class="text-primary hover:underline underline-offset-4"
+                  target="_blank"
+                  >learn more</a
+                >
+              </FormLabel>
               <FormControl>
                 <Input
                   class="w-full bg-secondary rounded-none"
@@ -57,7 +66,16 @@
           </FormField>
           <FormField v-slot="{ componentField }" name="apiKey">
             <FormItem class="flex-1">
-              <FormLabel class="text-foreground/50">API Key</FormLabel>
+              <FormLabel class="text-foreground/50 flex justify-between">
+                <span>API Key</span>
+                <a
+                  v-if="providerConfig?.getKeyURL"
+                  :href="providerConfig.getKeyURL"
+                  class="text-primary hover:underline underline-offset-4"
+                  target="_blank"
+                  >Get API Key</a
+                >
+              </FormLabel>
               <FormControl>
                 <Input class="w-full bg-secondary rounded-none" v-bind="componentField" />
               </FormControl>
@@ -179,14 +197,16 @@ import { useDefaultConfig } from '@/composables/use-default-config';
 import { Checkbox } from '@/components/ui/checkbox';
 import ModelDialog from './__components__/model-dialog.vue';
 import { useProviderModels } from '@/composables/use-provider-models';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
+import { getPreset, getProviderConfig } from '@/utils/provider';
 
 const props = defineProps<{
   index?: number;
 }>();
 
 const router = useRouter();
+const route = useRoute();
 const providerStore = useProviders();
 const { models: availableModels, isLoading: isTestLoading, fetchModels } = useProviderModels();
 
@@ -212,8 +232,6 @@ const modelTokenStats = computed(() => {
   );
 });
 
-watchEffect(() => console.log(modelTokenStats.value));
-
 const schema = z.object({
   type: z.enum(['openai', 'azure', 'gemini']),
   baseURL: z.union([z.string().url(), z.literal('')]).optional(),
@@ -233,6 +251,20 @@ const { override: overrideTimeout, value: timeout } = useDefaultConfig({
   set: (value) => form.setFieldValue('timeout', value),
   key: 'timeout',
   defaultValue: 30000
+});
+
+const preset = computed(() => {
+  const { preset } = route.query;
+  if (preset) {
+    return getPreset(preset as string);
+  }
+  return null;
+});
+const providerConfig = computed(() => {
+  if (!form.values.type || !form.values.baseURL) {
+    return null;
+  }
+  return getProviderConfig(form.values.type, form.values.baseURL);
 });
 
 const handleSelectedModels = (selectedModels: ModelConfig[]) => {
@@ -265,4 +297,12 @@ const save = async () => {
   );
   router.back();
 };
+
+watchEffect(() => {
+  if (!preset.value || provider.value) {
+    return;
+  }
+  form.setValues(preset.value.config as any, false);
+  models.value = preset.value.config.models ?? [];
+});
 </script>
