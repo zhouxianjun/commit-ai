@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { zeroToUndefined } from '../utils/utils';
 import type { ModelConfig, ServerConfig } from '../../types/shared';
 import { createProviderKey } from '../providers';
+import { omit } from 'lodash-es';
 
 export interface Server {
   config: ServerConfig;
@@ -49,7 +50,7 @@ export class LLMServerService implements vscode.Disposable {
     } else {
       servers[index] = config;
     }
-    this.configService.updateConfig(ConfigKeys.SERVERS, servers);
+    this.saveServers(servers);
   }
 
   deleteServer(index: number) {
@@ -58,11 +59,14 @@ export class LLMServerService implements vscode.Disposable {
       throw new Error('Invalid index');
     }
     servers.splice(index, 1);
-    this.configService.updateConfig(ConfigKeys.SERVERS, servers);
+    this.saveServers(servers);
   }
 
   saveServers(servers: ServerConfig[]) {
-    this.configService.updateConfig(ConfigKeys.SERVERS, servers);
+    this.configService.updateConfig(
+      ConfigKeys.SERVERS,
+      servers.map((s) => omit(s, 'providerKey'))
+    );
   }
 
   private buildServers() {
