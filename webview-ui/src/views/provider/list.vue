@@ -42,6 +42,7 @@
       </div>
       <div class="mt-4 flex-1 overflow-y-auto">
         <VueDraggable
+          v-if="providersStore.providers.length > 0"
           v-model="providersStore.providers"
           :animation="150"
           class="flex flex-col gap-4"
@@ -56,6 +57,35 @@
             @delete="handleDelete"
           />
         </VueDraggable>
+        <div
+          v-else
+          class="h-full flex flex-col items-center justify-center border-2 border-dashed border-foreground/5 rounded-[32px] bg-foreground/1 p-12 text-center"
+        >
+          <div
+            class="relative w-20 h-20 rounded-[24px] bg-primary/10 flex items-center justify-center mb-8 group"
+          >
+            <div
+              class="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse opacity-50"
+            ></div>
+            <Sparkles
+              class="w-10 h-10 text-primary relative z-10 transition-transform group-hover:scale-110 duration-500"
+            />
+          </div>
+          <h3 class="text-2xl font-bold mb-3 tracking-tight">Begin Your AI Experience</h3>
+          <p class="text-muted-foreground text-sm max-w-[340px] mb-10 leading-relaxed">
+            Configure your first AI provider to enable smart commit message generation. Select a
+            preset above or add a custom endpoint.
+          </p>
+          <Button
+            variant="default"
+            size="lg"
+            class="h-12 px-10 rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all duration-300"
+            @click="$router.push('/add')"
+          >
+            <Plus class="mr-2 h-4 w-4" />
+            ADD PROVIDER
+          </Button>
+        </div>
       </div>
     </div>
     <div
@@ -80,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, RefreshCcw } from 'lucide-vue-next';
+import { Plus, RefreshCcw, Sparkles } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import Preset from './__components__/preset.vue';
 import Provider from './__components__/provider.vue';

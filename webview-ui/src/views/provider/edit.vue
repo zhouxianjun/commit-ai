@@ -14,7 +14,7 @@
               :models="models"
               @selected="handleSelectedModels"
             >
-              <Button variant="default" :disabled="!availableModels.length">
+              <Button ref="addBtn" variant="default" :disabled="!availableModels.length">
                 <Plus />
                 ADD MODEL
               </Button>
@@ -136,8 +136,13 @@
           </FormField>
         </div>
       </div>
-      <div class="flex-1 overflow-y-auto">
-        <VueDraggable v-model="models" :animation="150" class="flex flex-col gap-4">
+      <div class="flex-1 overflow-y-auto min-h-[300px]">
+        <VueDraggable
+          v-if="models.length > 0"
+          v-model="models"
+          :animation="150"
+          class="flex flex-col gap-4"
+        >
           <Model
             v-for="model of models"
             :key="model.name"
@@ -147,6 +152,36 @@
             @delete="handleDeleteModel"
           />
         </VueDraggable>
+        <div
+          v-else
+          class="h-full flex flex-col items-center justify-center border-2 border-dashed border-foreground/5 rounded-3xl bg-foreground/1 p-8 text-center"
+        >
+          <div
+            class="relative w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group"
+          >
+            <div
+              class="absolute inset-0 bg-primary/20 blur-xl rounded-full animate-pulse opacity-50"
+            ></div>
+            <Sparkles
+              class="w-8 h-8 text-primary relative z-10 transition-transform group-hover:scale-110 duration-500"
+            />
+          </div>
+          <h3 class="text-xl font-bold mb-2">No Models Added</h3>
+          <p class="text-muted-foreground text-xs max-w-[280px] mb-6 leading-relaxed">
+            Configure models to start using this provider.
+          </p>
+          <div class="flex gap-3">
+            <Button
+              variant="default"
+              size="lg"
+              class="h-12 px-10 rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all duration-300"
+              @click="testAndAdd()"
+            >
+              <Plus class="mr-2 h-4 w-4" />
+              TEST & ADD MODELS
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -166,7 +201,7 @@
 
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { Gauge, Plus, Minus, Settings } from 'lucide-vue-next';
+import { Gauge, Plus, Minus, Settings, Sparkles } from 'lucide-vue-next';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import { useForm } from 'vee-validate';
@@ -184,7 +219,7 @@ import { Input } from '@/components/ui/input';
 import { NumberField, NumberFieldContent, NumberFieldInput } from '@/components/ui/number-field';
 import { Spinner } from '@/components/ui/spinner';
 import { useProviders } from '@/store/provides';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref, useTemplateRef, watchEffect } from 'vue';
 import Model from './__components__/model.vue';
 import type {
   ModelConfig,
@@ -205,6 +240,7 @@ const props = defineProps<{
   index?: number;
 }>();
 
+const addBtn = useTemplateRef('addBtn');
 const router = useRouter();
 const route = useRoute();
 const providerStore = useProviders();
@@ -276,12 +312,18 @@ const handleDeleteModel = (model: ModelConfig) => {
 const test = async () => {
   const result = await form.validate();
   if (result.valid && result.values) {
-    toast.promise(fetchModels(result.values as ProviderConfig), {
-      loading: 'Testing provider...',
-      success: 'Provider tested successfully!',
-      error: (e: any) => e.error?.message ?? e.message ?? 'Failed to test provider'
-    });
+    return toast
+      .promise(fetchModels(result.values as ProviderConfig), {
+        loading: 'Testing provider...',
+        success: 'Provider tested successfully!',
+        error: (e: any) => e.error?.message ?? e.message ?? 'Failed to test provider'
+      })
+      ?.unwrap();
   }
+};
+const testAndAdd = async () => {
+  await test();
+  addBtn.value?.$el?.click();
 };
 const save = async () => {
   const result = await form.validate();

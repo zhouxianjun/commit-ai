@@ -8,6 +8,15 @@
       <div class="flex flex-col">
         <span class="text-lg font-medium text-foreground capitalize">{{ name }}</span>
         <span class="text-xs text-muted-foreground">{{ config.baseURL }}</span>
+        <div
+          v-if="!config.models?.length"
+          class="flex items-center gap-1 mt-1 text-destructive/80 animate-pulse"
+        >
+          <AlertCircle class="size-3" />
+          <span class="text-[10px] font-bold uppercase tracking-wider"
+            >No Models Configured</span
+          >
+        </div>
       </div>
     </div>
     <div class="flex items-center gap-2">
@@ -23,9 +32,17 @@
         <Gauge />
       </Button>
       <Button variant="outline" @click="$router.push(`/edit/${props.index}`)">
-        <span class="text-lg font-black text-primary">{{ activeModels.length }}</span>
-        <span class="text-xs">/</span>
-        <span class="text-xs">{{ config.models?.length }}</span>
+        <template v-if="config.models?.length">
+          <span class="text-lg font-black text-primary">{{ activeModels.length }}</span>
+          <span class="text-xs">/</span>
+          <span class="text-xs">{{ config.models?.length }}</span>
+        </template>
+        <div v-else class="flex items-center gap-1 px-1">
+          <Plus class="size-3 text-primary" />
+          <span class="text-[10px] font-bold text-primary uppercase tracking-wider"
+            >Add Model</span
+          >
+        </div>
       </Button>
       <AlertDialog>
         <AlertDialogTrigger>
@@ -53,7 +70,7 @@
 
 <script setup lang="ts">
 import type { ServerConfig } from '@shared-types/shared';
-import { Bot, Gauge, Trash } from 'lucide-vue-next';
+import { AlertCircle, Bot, Gauge, Plus, Trash } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { useProvider } from '@/composables/use-provider';
 import {
