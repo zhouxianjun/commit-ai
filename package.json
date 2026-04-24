@@ -144,7 +144,7 @@
         "commit-ai.servers": {
           "type": "array",
           "default": [],
-          "description": "AI server configurations. Each entry defines a provider with its API credentials and available models. Servers are tried in order; on failure the next server is used automatically. Tip: Use the [AI Server Settings](command:extension.commit-ai.settings) command for a graphical interface to manage servers and view detailed token usage statistics.",
+          "markdownDescription": "AI server configurations. Each entry defines a provider with its API credentials and available models. Servers are tried in order; on failure the next server is used automatically. Tip: Use the [AI Server Settings](command:extension.commit-ai.settings) command for a graphical interface to manage servers and view detailed token usage statistics.",
           "items": {
             "type": "object",
             "required": [
@@ -276,7 +276,7 @@
         "commit-ai.USE_GITMOJI": {
           "type": "boolean",
           "default": true,
-          "description": "Whether to use gitmoji in commit messages. When true, uses prompt/with_gitmoji.md; when false, uses prompt/without_gitmoji.md."
+          "markdownDescription": "Whether to use gitmoji in commit messages. When true, uses `prompt/with_gitmoji.md`; when false, uses `prompt/without_gitmoji.md`."
         },
         "commit-ai.TOKEN_COUNT_MODE": {
           "type": "string",
@@ -285,7 +285,7 @@
             "accurate"
           ],
           "default": "fast",
-          "description": "Token counting mode. 'fast' uses character-based estimation (instant, no dependencies). 'accurate' uses tiktoken for precise counting (slightly slower, requires tiktoken dependency)."
+          "markdownDescription": "Token counting mode. `fast` uses character-based estimation (instant, no dependencies). `accurate` uses `tiktoken` for precise counting (slightly slower, requires `tiktoken` dependency)."
         },
         "commit-ai.SHOW_TOKEN_COUNT": {
           "type": "boolean",
