@@ -59,7 +59,7 @@
 
 ## 📦 安装方法
 
-1. 在 VS Code 扩展商店搜索 `CommitAI`。
+1. 在 VS Code 或 OpenVSX 扩展商店搜索 `CommitAI`。
 2. 点击安装。
 3. 确保本地安装了 Node.js >= 16。
 
@@ -73,6 +73,8 @@
 
 ## ⚙️ 详细配置项
 
+### 核心设置
+
 | 配置名称                       |  类型   |  默认值   | 描述                                                       |
 | :----------------------------- | :-----: | :-------: | :--------------------------------------------------------- |
 | `commit-ai.servers`            |  Array  |   `[]`    | 配置多组 AI 引擎，支持 OpenAI, Azure, Gemini 等。          |
@@ -80,6 +82,55 @@
 | `commit-ai.USE_GITMOJI`        | Boolean |  `true`   | 是否在消息前缀添加 Gitmoji（如 ✨, 🐛）。                  |
 | `commit-ai.TOKEN_COUNT_MODE`   |  Enum   |  `fast`   | `fast` 为快速估算，`accurate` 使用 tiktoken 进行精确计算。 |
 | `commit-ai.SHOW_TOKEN_COUNT`   | Boolean |  `true`   | 是否在底部状态栏显示当前暂存内容的 Token 预估。            |
+
+### AI 服务商类型 (`commit-ai.servers`)
+
+| 类型 (`type`) | 必需字段                                    | 建议 `baseURL`                   | 适用场景                                                                  |
+| :------------ | :------------------------------------------ | :------------------------------- | :------------------------------------------------------------------------ |
+| **`openai`**  | `apiKey`, `models`                          | `https://api.openai.com/v1`      | 标准 OpenAI、DeepSeek、OpenRouter 或任何兼容 OpenAI 接口的本地/云端服务。 |
+| **`gemini`**  | `apiKey`, `models`                          | (可选)                           | Google Gemini 官方服务。                                                  |
+| **`azure`**   | `apiKey`, `baseURL`, `apiVersion`, `models` | `https://{res}.openai.azure.com` | 微软 Azure OpenAI 服务。                                                  |
+
+### 模型属性配置 (`models` 数组)
+
+| 属性名            | 类型      | 默认值 | 说明                                                                                            |
+| :---------------- | :-------- | :----- | :---------------------------------------------------------------------------------------------- |
+| `name`            | `string`  | -      | **模型 ID**。如 `gpt-4o`, `deepseek-chat`。插件会根据此 ID 自动匹配 Token 限制。                |
+| `enabled`         | `boolean` | `true` | 是否启用该模型。                                                                                |
+| `temperature`     | `number`  | `0.7`  | 采样温度 (0-2)。越大越随机，越小越严谨。                                                        |
+| `maxTokens`       | `number`  | `0`    | 最大输出 Token 数 (0 为不限制)。                                                                |
+| `maxInputTokens`  | `number`  | `0`    | 最大输入上下文限制 (0 为根据模型名自动识别)。                                                   |
+| `reasoningEffort` | `string`  | `none` | **推理力度**：适用于 OpenAI o1/o3 及其映射到其他模型（如 Gemini 2.0）的 "Thinking/Think" 参数。 |
+| `options`         | `object`  | `{}`   | 扩展参数，透传给底层 SDK。                                                                      |
+
+---
+
+## 🛠️ 配置流程说明
+
+为了获得最佳体验，推荐使用**可视化配置面板**：
+
+<div style="display: flex; gap: 10px; align-items: center">
+  <img src="https://github.com/zhouxianjun/commit-ai/blob/main/images/provider-list.png?raw=true" alt="Providers list" style="width: 33%;">
+  <img src="https://github.com/zhouxianjun/commit-ai/blob/main/images/edit-provider.png?raw=true" alt="Edit provider" style="width: 33%;">
+  <img src="https://github.com/zhouxianjun/commit-ai/blob/main/images/add-model.png?raw=true" alt="Add model" style="width: 33%;">
+</div>
+
+1.  **启动面板**:
+    - 使用快捷键 `Cmd+Shift+P` / `Ctrl+Shift+P` 调出命令面板。
+    - 输入并选择 `CommitAI: AI Server Settings`。
+2.  **管理服务商**:
+    - 点击 **"Add Server"** 新增配置。
+    - 输入 API Key 并根据需要调整 Base URL。
+    - 💡 **提示**: 你可以添加多个服务商，插件会自动实现**故障转移 (Failover)** —— 当排名靠前的服务商不可用时，自动切换到下一个。
+3.  **精细化模型**:
+    - 💡 **重要**: 在点击 "Add Model" 之前，**必须先点击服务商卡片底部的 "Test" 按钮**。这会验证连接并获取该服务商支持的模型列表。
+    - 在服务商卡片中点击 **"Add Model"**，从下拉列表中选择模型（如 `gpt-4o-mini`）。
+    - 你可以为每个模型设置独立的 Temperature 或 Token 限制。
+4.  **测试与排序**:
+    - 点击 **"Test"** 按钮验证配置是否正确。
+    - 拖动服务商卡片左侧的图标可**调整优先级**。
+5.  **统计查看**:
+    - 在面板下方可以实时查看各服务商的 **Token 消耗统计**，帮助你控制成本。
 
 ## 键盘快捷键 (推荐自定义)
 

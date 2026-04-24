@@ -59,7 +59,7 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
 
 ## 📦 Installation
 
-1. Search for `CommitAI` in the VS Code Extension Marketplace.
+1. Search for `CommitAI` in the VS Code or OpenVSX Extension Marketplace.
 2. Click **Install**.
 3. Ensure you have Node.js version >= 16 installed locally.
 
@@ -71,15 +71,66 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
 4. **Generate**: Click the `$(sparkle)` (or CommitAI) icon button in the Source Control title bar.
 5. **Commit**: Review the generated message and click the checkmark to commit.
 
-## ⚙️ Key Configuration Options
+## ⚙️ Configuration Details
 
-| Configuration                  |  Type   |  Default  | Description                                                               |
-| :----------------------------- | :-----: | :-------: | :------------------------------------------------------------------------ |
-| `commit-ai.servers`            |  Array  |   `[]`    | List of AI server configurations including type, baseURL, and apiKey.     |
-| `commit-ai.AI_COMMIT_LANGUAGE` | String  | `English` | The target language for generated messages.                               |
-| `commit-ai.USE_GITMOJI`        | Boolean |  `true`   | Whether to include Gitmoji (e.g., ✨, 💡).                                |
-| `commit-ai.TOKEN_COUNT_MODE`   |  Enum   |  `fast`   | `fast` uses character estimation; `accurate` uses tiktoken for precision. |
-| `commit-ai.SHOW_TOKEN_COUNT`   | Boolean |  `true`   | Toggle the visibility of token usage in the status bar.                   |
+### Core Settings
+
+| Configuration                  |  Type   |  Default  | Description                                                           |
+| :----------------------------- | :-----: | :-------: | :-------------------------------------------------------------------- |
+| `commit-ai.servers`            |  Array  |   `[]`    | AI engine configurations, supporting OpenAI, Azure, Gemini, etc.      |
+| `commit-ai.AI_COMMIT_LANGUAGE` | String  | `English` | Target language for commit messages (19 options available).           |
+| `commit-ai.USE_GITMOJI`        | Boolean |  `true`   | Whether to include Gitmoji prefixes (e.g., ✨, 🐛).                   |
+| `commit-ai.TOKEN_COUNT_MODE`   |  Enum   |  `fast`   | `fast` for estimation; `accurate` uses tiktoken for precise counting. |
+| `commit-ai.SHOW_TOKEN_COUNT`   | Boolean |  `true`   | Toggle real-time token tracking in the status bar.                    |
+
+### AI Server Types (`commit-ai.servers`)
+
+| Type (`type`) | Required Fields                             | Suggested `baseURL`              | Use Case                                                                 |
+| :------------ | :------------------------------------------ | :------------------------------- | :----------------------------------------------------------------------- |
+| **`openai`**  | `apiKey`, `models`                          | `https://api.openai.com/v1`      | Standard OpenAI, DeepSeek, OpenRouter, or any OpenAI-compatible service. |
+| **`gemini`**  | `apiKey`, `models`                          | (Optional)                       | Official Google Gemini service.                                          |
+| **`azure`**   | `apiKey`, `baseURL`, `apiVersion`, `models` | `https://{res}.openai.azure.com` | Microsoft Azure OpenAI service.                                          |
+
+### Model Properties (`models` array)
+
+| Property          | Type      | Default | Description                                                                                                                  |
+| :---------------- | :-------- | :------ | :--------------------------------------------------------------------------------------------------------------------------- |
+| `name`            | `string`  | -       | **Model ID** (e.g., `gpt-4o`, `deepseek-chat`). The plugin auto-detects token limits based on this ID.                       |
+| `enabled`         | `boolean` | `true`  | Whether to enable this model.                                                                                                |
+| `temperature`     | `number`  | `0.7`   | Sampling temperature (0-2). Higher is more random, lower is more focused.                                                    |
+| `maxTokens`       | `number`  | `0`     | Max output tokens (0 = no limit).                                                                                            |
+| `maxInputTokens`  | `number`  | `0`     | Max input context window (0 = auto-detect based on model name).                                                              |
+| `reasoningEffort` | `string`  | `none`  | **Reasoning Effort**: Applied to OpenAI o1/o3 and mapped to "Thinking/Think" parameters for other models (e.g., Gemini 2.0). |
+| `options`         | `object`  | `{}`    | Key-value pairs passed directly to the underlying SDK.                                                                       |
+
+---
+
+## 🛠️ Configuration Workflow
+
+For the best experience, we recommend using the **Visual Settings Dashboard**:
+
+<div style="display: flex; gap: 10px; align-items: center">
+  <img src="https://github.com/zhouxianjun/commit-ai/blob/main/images/provider-list.png?raw=true" alt="Providers list" style="width: 33%;">
+  <img src="https://github.com/zhouxianjun/commit-ai/blob/main/images/edit-provider.png?raw=true" alt="Edit provider" style="width: 33%;">
+  <img src="https://github.com/zhouxianjun/commit-ai/blob/main/images/add-model.png?raw=true" alt="Add model" style="width: 33%;">
+</div>
+
+1.  **Launch Dashboard**:
+    - Open the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`).
+    - Search for and select `CommitAI: AI Server Settings`.
+2.  **Manage Servers**:
+    - Click **"Add Server"** to create a new configuration.
+    - Enter your API Key and adjust the Base URL if necessary.
+    - 💡 **Pro Tip**: Add multiple servers to enable **Automatic Failover** — if one fails, the next in line will take over.
+3.  **Refine Models**:
+    - 💡 **Important**: You **must click the "Test" button** at the bottom of the server card before clicking "Add Model". This verifies the connection and fetches the list of available models.
+    - Click **"Add Model"** within a server card and select a model from the list (e.g., `gpt-4o-mini`).
+    - Customize temperature or token limits per model.
+4.  **Test & Reorder**:
+    - Click **"Test"** to verify the connection.
+    - Drag the icon on the left of server cards to **adjust priority**.
+5.  **Monitor Usage**:
+    - View real-time **Token Usage Statistics** at the bottom of the dashboard to keep track of your costs.
 
 ## Keyboard Shortcuts
 
