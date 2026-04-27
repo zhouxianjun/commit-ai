@@ -2,6 +2,10 @@ import simpleGit from 'simple-git';
 import * as vscode from 'vscode';
 import type { API } from './git';
 
+export interface DiffOptions {
+  excludeFiles?: string[];
+}
+
 export interface GitExtension {
   readonly enabled: boolean;
   readonly onDidChangeEnablement: vscode.Event<boolean>;
@@ -23,7 +27,8 @@ export interface GitExtension {
  * Retrieves the staged changes from the Git repository.
  */
 export async function getDiffStaged(
-  repo: any
+  repo: any,
+  options: DiffOptions = {}
 ): Promise<{ diff: string; error?: string; isEmpty: boolean }> {
   try {
     const rootPath = repo?.rootUri?.fsPath || vscode.workspace.workspaceFolders?.[0].uri.fsPath;
@@ -33,7 +38,15 @@ export async function getDiffStaged(
     }
 
     const git = simpleGit(rootPath);
-    const diff = await git.diff(['--staged']);
+    const { excludeFiles = [] } = options;
+
+    const pathspecs = ['--'];
+    excludeFiles.forEach((pattern) => {
+      if (pattern) {
+        pathspecs.push(`:(exclude)${pattern}`);
+      }
+    });
+    const diff = await git.diff(['--staged', ...pathspecs]);
 
     return {
       diff: diff || 'No changes staged.',

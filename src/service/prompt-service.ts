@@ -11,7 +11,11 @@ export class PromptService {
   constructor(@inject(ConfigService) private configService: ConfigService) {}
 
   async buildPromptMessages(repo: Repository): Promise<ChatMessage[]> {
-    const { diff, isEmpty } = await getDiffStaged(repo);
+    const excludeFiles = this.configService.getConfig<string[]>(ConfigKeys.EXCLUDE_FILES, []);
+
+    const { diff, isEmpty } = await getDiffStaged(repo, {
+      excludeFiles
+    });
     if (isEmpty) {
       return;
     }
@@ -34,15 +38,18 @@ export class PromptService {
     return messages;
   }
 
-  private getPromptTemplate() {
+  private doGetTemplate() {
     const systemPrompt = this.configService.getConfig<string>(ConfigKeys.SYSTEM_PROMPT);
     if (systemPrompt) {
       return systemPrompt;
     }
-    const language = this.configService.getConfig<string>(ConfigKeys.AI_COMMIT_LANGUAGE, 'English');
     const useGitmoji = this.configService.getConfig<boolean>(ConfigKeys.USE_GITMOJI, true);
-    const template = loadPromptTemplate(useGitmoji ? 'with_gitmoji.md' : 'without_gitmoji.md');
-    return template.replace(/\${language}/g, language);
+    return loadPromptTemplate(useGitmoji ? 'with_gitmoji.md' : 'without_gitmoji.md');
+  }
+  private getPromptTemplate() {
+    const promptTemplate = this.doGetTemplate();
+    const language = this.configService.getConfig<string>(ConfigKeys.AI_COMMIT_LANGUAGE, 'English');
+    return promptTemplate.replace(/\${language}/g, language);
   }
   private getSystemPrompt(): ChatMessage[] {
     return [

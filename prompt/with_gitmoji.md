@@ -31,7 +31,7 @@ You will act as a git commit message generator. When receiving a git diff, you w
 | feat     | ✨    | New feature          | user, payment       |
 | fix      | 🐛    | Bug fix              | auth, data          |
 | docs     | 📝    | Documentation        | README, API         |
-| style    | 💄    | Code style           | formatting          |
+| style    | 🎨    | Code style           | formatting          |
 | refactor | ♻️    | Code refactoring     | utils, helpers      |
 | perf     | ⚡️    | Performance          | query, cache        |
 | test     | ✅    | Testing              | unit, e2e           |

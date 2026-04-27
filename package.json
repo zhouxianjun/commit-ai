@@ -291,6 +291,20 @@
           "type": "boolean",
           "default": true,
           "description": "Whether to show token count in the status bar."
+        },
+        "commit-ai.EXCLUDE_FILES": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "package-lock.json",
+            "pnpm-lock.yaml",
+            "yarn.lock",
+            "*.min.js",
+            "*.min.css"
+          ],
+          "description": "Files to exclude from the diff. Supports simple patterns (e.g. *.lock)."
         }
       },
       "title": "CommitAI"
