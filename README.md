@@ -55,6 +55,7 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
   - **Multi-language**: Generate messages in 19 different languages.
 - **🛠️ Extensibility & Customization**
   - Custom system prompts to fit your team's specific commit style.
+  - **Exclude Files**: Define patterns (like `*.lock`) to skip unimportant files during diff analysis.
   - Contextual awareness: AI can consider text pre-entered in the commit box as extra context to refine its generation.
 
 ## 📦 Installation
@@ -82,6 +83,7 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
 | `commit-ai.USE_GITMOJI`        | Boolean |  `true`   | Whether to include Gitmoji prefixes (e.g., ✨, 🐛).                   |
 | `commit-ai.TOKEN_COUNT_MODE`   |  Enum   |  `fast`   | `fast` for estimation; `accurate` uses tiktoken for precise counting. |
 | `commit-ai.SHOW_TOKEN_COUNT`   | Boolean |  `true`   | Toggle real-time token tracking in the status bar.                    |
+| `commit-ai.EXCLUDE_FILES`      |  Array  |  `[...]`  | Files to exclude from the diff (e.g. `*.lock`, `*.min.js`).           |
 
 ### AI Server Types (`commit-ai.servers`)
 

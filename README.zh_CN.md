@@ -55,6 +55,7 @@
   - **多语言输出**: 支持中文、英文、日文、韩文等 19 种语言。
 - **🛠️ 极致的自定义能力**
   - 支持自定义系统 Prompt，可针对项目需求定制特殊的提交风格。
+  - **文件过滤**: 支持通过配置 `excludeFiles` 忽略 `*.lock` 等无关紧要的文件。
   - 支持在生成前从提交框读取额外上下文信息，引导 AI 生成更精准的描述。
 
 ## 📦 安装方法
@@ -82,6 +83,7 @@
 | `commit-ai.USE_GITMOJI`        | Boolean |  `true`   | 是否在消息前缀添加 Gitmoji（如 ✨, 🐛）。                  |
 | `commit-ai.TOKEN_COUNT_MODE`   |  Enum   |  `fast`   | `fast` 为快速估算，`accurate` 使用 tiktoken 进行精确计算。 |
 | `commit-ai.SHOW_TOKEN_COUNT`   | Boolean |  `true`   | 是否在底部状态栏显示当前暂存内容的 Token 预估。            |
+| `commit-ai.EXCLUDE_FILES`      |  Array  |  `[...]`  | 忽略不需要生成提交信息的文件（支持 `*.lock`, `*.min.js` 等模式）。 |
 
 ### AI 服务商类型 (`commit-ai.servers`)
 
