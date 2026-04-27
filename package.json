@@ -139,7 +139,7 @@
         "commit-ai.AI_COMMIT_SYSTEM_PROMPT": {
           "type": "string",
           "default": "",
-          "description": "Custom system prompt for generating commit messages"
+          "description": "Custom system prompt for generating commit messages. Used only when 'PROMPT_TEMPLATE' is set to 'custom'."
         },
         "commit-ai.servers": {
           "type": "array",
@@ -273,10 +273,28 @@
           "default": "none",
           "description": "Global default reasoning effort for OpenAI reasoning models (o1/o3). 'none' = no reasoning tokens."
         },
-        "commit-ai.USE_GITMOJI": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Whether to use gitmoji in commit messages. When true, uses `prompt/with_gitmoji.md`; when false, uses `prompt/without_gitmoji.md`."
+        "commit-ai.PROMPT_TEMPLATE": {
+          "type": "string",
+          "default": "with_gitmoji.md",
+          "description": "Select a prompt template for generating commit messages. Choose 'custom' to use your own prompt defined in 'AI_COMMIT_SYSTEM_PROMPT'.",
+          "enum": [
+            "with_gitmoji.md",
+            "with_nobody_gitmoji.md",
+            "with_simple_gitmoji.md",
+            "without_gitmoji.md",
+            "without_nobody_gitmoji.md",
+            "without_simple_gitmoji.md",
+            "custom"
+          ],
+          "enumDescriptions": [
+            "With Gitmoji (Detailed body)",
+            "With Gitmoji (Subject only)",
+            "With Gitmoji (Simple body)",
+            "Without Gitmoji (Detailed body)",
+            "Without Gitmoji (Subject only)",
+            "Without Gitmoji (Simple body)",
+            "Custom (Use AI_COMMIT_SYSTEM_PROMPT)"
+          ]
         },
         "commit-ai.TOKEN_COUNT_MODE": {
           "type": "string",

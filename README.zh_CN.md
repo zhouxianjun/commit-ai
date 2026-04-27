@@ -51,7 +51,7 @@
   - 实时记录并汇总各服务商的 Token 消耗详情，支持按周期查看历史数据。
 - **📝 提交规范一致性**
   - 默认输出风格严谨的 Conventional Commits。
-  - **Gitmoji 支持**: 自由开启或关闭表情符号。
+  - **Prompt 模板选择**: 内置多种 Prompt 模板（带/不带 Gitmoji，带/不带 Body 等），支持一键切换，也支持完全自定义。
   - **多语言输出**: 支持中文、英文、日文、韩文等 19 种语言。
 - **🛠️ 极致的自定义能力**
   - 支持自定义系统 Prompt，可针对项目需求定制特殊的提交风格。
@@ -80,7 +80,8 @@
 | :----------------------------- | :-----: | :-------: | :--------------------------------------------------------- |
 | `commit-ai.servers`            |  Array  |   `[]`    | 配置多组 AI 引擎，支持 OpenAI, Azure, Gemini 等。          |
 | `commit-ai.AI_COMMIT_LANGUAGE` | String  | `English` | 设置提交信息的语言（已预设 19 种选项）。                   |
-| `commit-ai.USE_GITMOJI`        | Boolean |  `true`   | 是否在消息前缀添加 Gitmoji（如 ✨, 🐛）。                  |
+| `commit-ai.PROMPT_TEMPLATE`      |  String | `with_gitmoji.md` | 选择 Prompt 模板（详见设置面板中的选项）。                 |
+| `commit-ai.AI_COMMIT_SYSTEM_PROMPT` | String |   `""`    | 自定义 System Prompt（仅在 `PROMPT_TEMPLATE` 为 `custom` 时有效）。 |
 | `commit-ai.TOKEN_COUNT_MODE`   |  Enum   |  `fast`   | `fast` 为快速估算，`accurate` 使用 tiktoken 进行精确计算。 |
 | `commit-ai.SHOW_TOKEN_COUNT`   | Boolean |  `true`   | 是否在底部状态栏显示当前暂存内容的 Token 预估。            |
 | `commit-ai.EXCLUDE_FILES`      |  Array  |  `[...]`  | 忽略不需要生成提交信息的文件（支持 `*.lock`, `*.min.js` 等模式）。 |

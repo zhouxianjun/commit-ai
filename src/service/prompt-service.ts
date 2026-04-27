@@ -39,12 +39,14 @@ export class PromptService {
   }
 
   private doGetTemplate() {
-    const systemPrompt = this.configService.getConfig<string>(ConfigKeys.SYSTEM_PROMPT);
-    if (systemPrompt) {
-      return systemPrompt;
+    const template = this.configService.getConfig<string>(
+      ConfigKeys.PROMPT_TEMPLATE,
+      'with_gitmoji.md'
+    );
+    if (template === 'custom') {
+      return this.configService.getConfig<string>(ConfigKeys.SYSTEM_PROMPT, '');
     }
-    const useGitmoji = this.configService.getConfig<boolean>(ConfigKeys.USE_GITMOJI, true);
-    return loadPromptTemplate(useGitmoji ? 'with_gitmoji.md' : 'without_gitmoji.md');
+    return loadPromptTemplate(template);
   }
   private getPromptTemplate() {
     const promptTemplate = this.doGetTemplate();

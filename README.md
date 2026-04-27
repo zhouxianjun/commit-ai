@@ -51,7 +51,7 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
   - Track your consumption over time with detailed logs and statistics per provider.
 - **📝 Consistency & Conventions**
   - Strictly follows the Conventional Commits specification.
-  - **Gitmoji Support**: Toggle emoji prefixes (✨, 🐛, etc.) on or off.
+  - **Prompt Templates**: Select from multiple built-in templates (with/without Gitmoji, with/without body, etc.) or provide your own.
   - **Multi-language**: Generate messages in 19 different languages.
 - **🛠️ Extensibility & Customization**
   - Custom system prompts to fit your team's specific commit style.
@@ -80,7 +80,8 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
 | :----------------------------- | :-----: | :-------: | :-------------------------------------------------------------------- |
 | `commit-ai.servers`            |  Array  |   `[]`    | AI engine configurations, supporting OpenAI, Azure, Gemini, etc.      |
 | `commit-ai.AI_COMMIT_LANGUAGE` | String  | `English` | Target language for commit messages (19 options available).           |
-| `commit-ai.USE_GITMOJI`        | Boolean |  `true`   | Whether to include Gitmoji prefixes (e.g., ✨, 🐛).                   |
+| `commit-ai.PROMPT_TEMPLATE`      |  String | `with_gitmoji.md` | Select a prompt template (see available options in settings). |
+| `commit-ai.AI_COMMIT_SYSTEM_PROMPT` | String |   `""`    | Custom system prompt (only used when `PROMPT_TEMPLATE` is `custom`). |
 | `commit-ai.TOKEN_COUNT_MODE`   |  Enum   |  `fast`   | `fast` for estimation; `accurate` uses tiktoken for precise counting. |
 | `commit-ai.SHOW_TOKEN_COUNT`   | Boolean |  `true`   | Toggle real-time token tracking in the status bar.                    |
 | `commit-ai.EXCLUDE_FILES`      |  Array  |  `[...]`  | Files to exclude from the diff (e.g. `*.lock`, `*.min.js`).           |
