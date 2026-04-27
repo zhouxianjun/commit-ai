@@ -1,5 +1,6 @@
 import { get_encoding, get_encoding_name_for_model, type TiktokenModel } from 'tiktoken';
 import TOKEN_MODELS from './token-models.json';
+import { mapWithYield } from './utils';
 
 export interface TokenCountResult {
   estimated: number;
@@ -11,15 +12,16 @@ export type TokenCountMode = typeof TOKEN_COUNT_FAST | typeof TOKEN_COUNT_ACCURA
 
 const DEFAULT_ENCODING = 'cl100k_base';
 
-export const calculateTokens = (
+export const calculateTokens = async (
   messages: string[],
   model: string,
-  mode: TokenCountMode = TOKEN_COUNT_FAST
-) => {
+  mode: TokenCountMode = TOKEN_COUNT_FAST,
+  signal?: AbortSignal
+): Promise<TokenCountResult> => {
   if (mode === TOKEN_COUNT_FAST) {
     return estimateTokensFast(messages);
   }
-  return estimateTokensAccurate(messages, model);
+  return estimateTokensAccurate(messages, model, signal);
 };
 
 export const estimateTokensFast = (messages: string[]): TokenCountResult => {
@@ -30,17 +32,38 @@ export const estimateTokensFast = (messages: string[]): TokenCountResult => {
   };
 };
 
+const SPLIT_CHUNK_SIZE = 10000;
 export const estimateTokensAccurate = async (
   messages: string[],
-  model: string
+  model: string,
+  signal?: AbortSignal
 ): Promise<TokenCountResult> => {
   const totalChars = getTotalChars(messages);
 
   try {
     const encodingName = getTokenEncoding(model);
     const enc = get_encoding(encodingName);
+
+    // split message
+    const splitMessages = messages.flatMap((msg) => {
+      if (msg.length > SPLIT_CHUNK_SIZE) {
+        return msg.match(new RegExp(`.{1,${SPLIT_CHUNK_SIZE}}`, 'g'));
+      }
+      return msg;
+    });
     // 对齐 OpenAI cookbook 公式 + 3
-    const estimated = messages.reduce((sum, msg) => sum + enc.encode_ordinary(msg).length + 3, 3);
+    let estimated = 3;
+    console.debug('start calculate estimated', splitMessages.length);
+    await mapWithYield(
+      splitMessages,
+      (msg) => {
+        estimated += enc.encode_ordinary(msg).length + 3;
+      },
+      1,
+      signal
+    );
+    console.debug('end calculate estimated', estimated);
+
     enc.free();
     return { estimated, totalChars };
   } catch {

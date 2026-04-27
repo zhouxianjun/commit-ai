@@ -1,4 +1,4 @@
-import { inject, injectable, LazyServiceIdentifier } from 'inversify';
+import { inject, injectable } from 'inversify';
 import * as vscode from 'vscode';
 import { ConfigKeys, ConfigService } from './config-service';
 import { LLMServerService } from './llm-server-service';
@@ -7,7 +7,8 @@ import { calculateTokens, type TokenCountMode } from '../utils/tokens';
 import { getCurrentGitRepository, getGitApi } from '../utils/git-utils';
 import { debounce, isNil, type DebouncedFunc } from 'lodash-es';
 import { PromptService } from './prompt-service';
-import { ProviderService } from './provider-service';
+import { debouncePromise, type DebouncedPromiseFunc } from '../utils/utils';
+import type { Repository } from '../utils/git';
 
 export interface TokenState {
   tokens: number;
@@ -30,7 +31,9 @@ export class TokenService implements vscode.Disposable {
   };
   private listeners: TokenStateChangeListener[] = [];
   private disposables: vscode.Disposable[] = [];
-  private scheduleUpdate: DebouncedFunc<() => Promise<void>>;
+  private scheduleUpdate: DebouncedPromiseFunc<() => Promise<void>>;
+  private abortController?: AbortController;
+  private lastMessagesHash?: string;
 
   constructor(
     @inject(ConfigService)
@@ -40,21 +43,36 @@ export class TokenService implements vscode.Disposable {
     @inject(ModelContextService)
     private readonly modelContextService: ModelContextService,
     @inject(PromptService)
-    private readonly promptService: PromptService,
-    @inject(new LazyServiceIdentifier(() => ProviderService))
-    private readonly providerService: ProviderService
+    private readonly promptService: PromptService
   ) {
-    this.scheduleUpdate = debounce(this.updateTokenCount.bind(this), 500);
+    this.scheduleUpdate = debouncePromise(this.updateTokenCount.bind(this), 800);
     this.disposables.push(this.configService.onDidChange(() => this.scheduleUpdate()));
-    this.disposables.push(vscode.workspace.onDidChangeTextDocument(() => this.scheduleUpdate()));
+    this.disposables.push(
+      vscode.workspace.onDidChangeTextDocument((e) => {
+        if (
+          e.document.uri.scheme === 'vscode-scm' ||
+          /^git\/scm.*\/input$/.test(e.document.uri.fsPath)
+        ) {
+          this.scheduleUpdate();
+        }
+      })
+    );
+
     const gitApi = getGitApi();
     if (gitApi) {
-      gitApi.onDidOpenRepository((repo) => {
+      const registeredRepos = new Set<string>();
+      const setupRepo = (repo: Repository) => {
+        const path = repo.rootUri.fsPath;
+        if (registeredRepos.has(path)) {
+          return;
+        }
+        registeredRepos.add(path);
+
         this.disposables.push(repo.state.onDidChange(() => this.scheduleUpdate()));
-      });
-      gitApi.repositories.forEach((repo) => {
-        this.disposables.push(repo.state.onDidChange(() => this.scheduleUpdate()));
-      });
+      };
+
+      this.disposables.push(gitApi.onDidOpenRepository(setupRepo));
+      gitApi.repositories.forEach(setupRepo);
     }
     this.scheduleUpdate();
   }
@@ -63,7 +81,7 @@ export class TokenService implements vscode.Disposable {
     return this._state;
   }
 
-  async analyze(messages: string[]) {
+  async analyze(messages: string[], signal?: AbortSignal) {
     this.updateState({
       status: 'analyzing'
     });
@@ -78,7 +96,7 @@ export class TokenService implements vscode.Disposable {
     const tokenCountMode = this.configService.getConfig<TokenCountMode>(
       ConfigKeys.TOKEN_COUNT_MODE
     );
-    const tokenResult = await calculateTokens(messages, model.name, tokenCountMode);
+    const tokenResult = await calculateTokens(messages, model.name, tokenCountMode, signal);
 
     this.updateState({
       tokens: tokenResult.estimated,
@@ -104,6 +122,7 @@ export class TokenService implements vscode.Disposable {
   }
 
   reset() {
+    this.lastMessagesHash = undefined;
     this.updateState({
       tokens: 0,
       limit: undefined,
@@ -114,6 +133,10 @@ export class TokenService implements vscode.Disposable {
   }
 
   private async updateTokenCount() {
+    this.abortController?.abort();
+    this.abortController = new AbortController();
+    const signal = this.abortController.signal;
+
     try {
       const repo = getCurrentGitRepository();
       if (!repo) {
@@ -124,8 +147,16 @@ export class TokenService implements vscode.Disposable {
         return this.reset();
       }
 
-      await this.analyze(messages.map((m) => m.content));
-    } catch {
+      const contentList = messages.map((m) => m.content);
+      const messagesHash = JSON.stringify(contentList);
+      if (messagesHash === this.lastMessagesHash) {
+        return;
+      }
+      this.lastMessagesHash = messagesHash;
+
+      await this.analyze(contentList, signal);
+    } catch (err) {
+      console.error(err);
       // Silently fail to avoid interrupting user workflow
     }
   }
@@ -172,5 +203,6 @@ export class TokenService implements vscode.Disposable {
   dispose() {
     this.disposables.forEach((disposable) => disposable.dispose());
     this.scheduleUpdate.cancel();
+    this.abortController?.abort();
   }
 }
