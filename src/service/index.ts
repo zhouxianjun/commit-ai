@@ -12,6 +12,7 @@ import { PromptService } from './prompt-service';
 import { ProviderService } from './provider-service';
 import { TokenStatsService } from './token-stats-service';
 import { WebviewService } from './webview-service';
+import { DiffSimplifyService } from './diff-simplify';
 
 export const container = new Container();
 
@@ -26,6 +27,7 @@ const services = [
   ProviderService,
   CommitService,
   WebviewService,
+  DiffSimplifyService,
   CommandService
 ] as const;
 export const initContainer = (context: vscode.ExtensionContext) => {

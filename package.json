@@ -136,6 +136,29 @@
           ],
           "type": "string"
         },
+        "commit-ai.PROMPT_TEMPLATE": {
+          "type": "string",
+          "default": "with_gitmoji.md",
+          "description": "Select a prompt template for generating commit messages. Choose 'custom' to use your own prompt defined in 'AI_COMMIT_SYSTEM_PROMPT'.",
+          "enum": [
+            "with_gitmoji.md",
+            "with_nobody_gitmoji.md",
+            "with_simple_gitmoji.md",
+            "without_gitmoji.md",
+            "without_nobody_gitmoji.md",
+            "without_simple_gitmoji.md",
+            "custom"
+          ],
+          "enumDescriptions": [
+            "With Gitmoji (Detailed body)",
+            "With Gitmoji (Subject only)",
+            "With Gitmoji (Simple body)",
+            "Without Gitmoji (Detailed body)",
+            "Without Gitmoji (Subject only)",
+            "Without Gitmoji (Simple body)",
+            "Custom (Use AI_COMMIT_SYSTEM_PROMPT)"
+          ]
+        },
         "commit-ai.AI_COMMIT_SYSTEM_PROMPT": {
           "type": "string",
           "default": "",
@@ -273,29 +296,6 @@
           "default": "none",
           "description": "Global default reasoning effort for OpenAI reasoning models (o1/o3). 'none' = no reasoning tokens."
         },
-        "commit-ai.PROMPT_TEMPLATE": {
-          "type": "string",
-          "default": "with_gitmoji.md",
-          "description": "Select a prompt template for generating commit messages. Choose 'custom' to use your own prompt defined in 'AI_COMMIT_SYSTEM_PROMPT'.",
-          "enum": [
-            "with_gitmoji.md",
-            "with_nobody_gitmoji.md",
-            "with_simple_gitmoji.md",
-            "without_gitmoji.md",
-            "without_nobody_gitmoji.md",
-            "without_simple_gitmoji.md",
-            "custom"
-          ],
-          "enumDescriptions": [
-            "With Gitmoji (Detailed body)",
-            "With Gitmoji (Subject only)",
-            "With Gitmoji (Simple body)",
-            "Without Gitmoji (Detailed body)",
-            "Without Gitmoji (Subject only)",
-            "Without Gitmoji (Simple body)",
-            "Custom (Use AI_COMMIT_SYSTEM_PROMPT)"
-          ]
-        },
         "commit-ai.TOKEN_COUNT_MODE": {
           "type": "string",
           "enum": [
@@ -323,6 +323,17 @@
             "*.min.css"
           ],
           "description": "Files to exclude from the diff. Supports simple patterns (e.g. *.lock)."
+        },
+        "commit-ai.SMART_DIFF": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically simplify diff content before sending to AI. Removes binary files, asset files, generated code, and truncates oversized diffs while preserving file names and change summaries."
+        },
+        "commit-ai.SMART_DIFF_MAX_FILE_CHARS": {
+          "type": "number",
+          "default": 20000,
+          "minimum": 1000,
+          "description": "Maximum characters per file diff. Files exceeding this limit will be truncated (keeping 70% from the beginning and 30% from the end)."
         }
       },
       "title": "CommitAI"

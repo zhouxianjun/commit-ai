@@ -47,8 +47,8 @@ export class CommitService {
         }
 
         progress.report({ message: 'Getting staged changes...' });
-        const messages = await this.promptService.buildPromptMessages(repo);
-        if (!messages) {
+        const result = await this.promptService.buildPromptMessages(repo);
+        if (!result || !result.messages) {
           throw new Error('No staged changes found. Please stage your changes first.');
         }
 
@@ -57,7 +57,7 @@ export class CommitService {
           text: commitMessage,
           usage,
           model
-        } = await this.providerService.chatCompletion(messages, abortController.signal);
+        } = await this.providerService.chatCompletion(result.messages, abortController.signal);
         if (!commitMessage) {
           throw new Error('AI provider returned an empty message.');
         }

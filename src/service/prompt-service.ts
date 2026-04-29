@@ -5,12 +5,22 @@ import path from 'path';
 import * as fs from 'fs-extra';
 import type { Repository } from '../utils/git';
 import { getDiffStaged } from '../utils/git-utils';
+import { DiffSimplifyService } from './diff-simplify';
+import type { SimplifyStats } from './diff-simplify/types';
+
+export interface PromptBuildResult {
+  messages: ChatMessage[];
+  diffStats?: SimplifyStats;
+}
 
 @injectable()
 export class PromptService {
-  constructor(@inject(ConfigService) private configService: ConfigService) {}
+  constructor(
+    @inject(ConfigService) private configService: ConfigService,
+    @inject(DiffSimplifyService) private diffSimplifyService: DiffSimplifyService
+  ) {}
 
-  async buildPromptMessages(repo: Repository): Promise<ChatMessage[]> {
+  async buildPromptMessages(repo: Repository): Promise<PromptBuildResult | undefined> {
     const excludeFiles = this.configService.getConfig<string[]>(ConfigKeys.EXCLUDE_FILES, []);
 
     const { diff, isEmpty } = await getDiffStaged(repo, {
@@ -30,12 +40,14 @@ export class PromptService {
       });
     }
 
+    const { diff: simplifiedDiff, stats } = await this.diffSimplifyService.simplify(diff);
+
     messages.push({
       role: 'user',
-      content: diff
+      content: simplifiedDiff
     });
 
-    return messages;
+    return { messages, diffStats: stats };
   }
 
   private doGetTemplate() {

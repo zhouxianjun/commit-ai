@@ -61,10 +61,15 @@ export class StatusBarService implements vscode.Disposable {
     const tokens = this.compactNumber(state.tokens);
     const usage =
       state.limit && state.usagePercent !== undefined
-        ? ` (${Math.round(state.usagePercent)}%)`
+        ? ` (${(state.usagePercent || 0).toFixed(1)}%)`
         : '';
 
-    return `$(sparkle) ~${tokens}${usage}`;
+    const stats =
+      state.diffStats && state.diffStats.savedPercent > 0
+        ? ` $(zap) -${state.diffStats.savedPercent}%`
+        : '';
+
+    return `$(sparkle) ~${tokens}${usage}${stats}`;
   }
 
   private compactNumber(num: number): string {
@@ -89,10 +94,22 @@ export class StatusBarService implements vscode.Disposable {
 
     tooltip.appendMarkdown(`- Total Characters: **${state.totalChars.toLocaleString()}**\n`);
     tooltip.appendMarkdown(`- Estimated Tokens: **~${state.tokens.toLocaleString()}**\n`);
-
     if (state.limit) {
       tooltip.appendMarkdown(`- Model Window Limit: **${state.limit.toLocaleString()}**\n`);
       tooltip.appendMarkdown(`- Context Usage: **${(state.usagePercent || 0).toFixed(1)}%**\n`);
+    }
+
+    if (state.diffStats && state.diffStats.savedPercent > 0) {
+      tooltip.appendMarkdown('\n**Diff Simplification**\n\n');
+      tooltip.appendMarkdown(
+        `- Original Size: **${state.diffStats.originalChars.toLocaleString()} chars**\n`
+      );
+      tooltip.appendMarkdown(
+        `- Simplified Size: **${state.diffStats.simplifiedChars.toLocaleString()} chars**\n`
+      );
+      tooltip.appendMarkdown(
+        `- Saved: **${state.diffStats.savedPercent}%** (${state.diffStats.summarizedFiles} files summarized, ${state.diffStats.truncatedFiles} truncated)\n`
+      );
     }
 
     tooltip.appendMarkdown('\n---\n\n');

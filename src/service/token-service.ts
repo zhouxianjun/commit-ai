@@ -5,10 +5,11 @@ import { LLMServerService } from './llm-server-service';
 import { ModelContextService } from './model-context';
 import { calculateTokens, type TokenCountMode } from '../utils/tokens';
 import { getCurrentGitRepository, getGitApi } from '../utils/git-utils';
-import { debounce, isNil, type DebouncedFunc } from 'lodash-es';
+import { isNil } from 'lodash-es';
 import { PromptService } from './prompt-service';
 import { debouncePromise, type DebouncedPromiseFunc } from '../utils/utils';
 import type { Repository } from '../utils/git';
+import type { SimplifyStats } from './diff-simplify/types';
 
 export interface TokenState {
   tokens: number;
@@ -17,6 +18,7 @@ export interface TokenState {
   usagePercent: number | undefined;
   status: 'idle' | 'analyzing' | 'ready' | 'exceeded' | 'warning' | 'caution' | 'ok';
   modelName?: string;
+  diffStats?: SimplifyStats;
 }
 export type TokenStateChangeListener = (state: TokenState) => void;
 
@@ -81,7 +83,7 @@ export class TokenService implements vscode.Disposable {
     return this._state;
   }
 
-  async analyze(messages: string[], signal?: AbortSignal) {
+  async analyze(messages: string[], diffStats?: SimplifyStats, signal?: AbortSignal) {
     this.updateState({
       status: 'analyzing'
     });
@@ -102,7 +104,8 @@ export class TokenService implements vscode.Disposable {
       tokens: tokenResult.estimated,
       limit,
       totalChars: tokenResult.totalChars,
-      modelName: model.name
+      modelName: model.name,
+      diffStats
     });
 
     return this._state;
@@ -142,19 +145,19 @@ export class TokenService implements vscode.Disposable {
       if (!repo) {
         return this.reset();
       }
-      const messages = await this.promptService.buildPromptMessages(repo);
-      if (!messages) {
+      const result = await this.promptService.buildPromptMessages(repo);
+      if (!result || !result.messages) {
         return this.reset();
       }
 
-      const contentList = messages.map((m) => m.content);
+      const contentList = result.messages.map((m) => m.content);
       const messagesHash = JSON.stringify(contentList);
       if (messagesHash === this.lastMessagesHash) {
         return;
       }
       this.lastMessagesHash = messagesHash;
 
-      await this.analyze(contentList, signal);
+      await this.analyze(contentList, result.diffStats, signal);
     } catch (err) {
       console.error(err);
       // Silently fail to avoid interrupting user workflow
