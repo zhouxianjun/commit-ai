@@ -14,7 +14,7 @@
               :models="models"
               @selected="handleSelectedModels"
             >
-              <Button ref="addBtn" variant="default" :disabled="!availableModels.length">
+              <Button ref="addBtn" variant="default" @click="doFetchModels()">
                 <Plus />
                 ADD MODEL
               </Button>
@@ -186,10 +186,10 @@
     </div>
 
     <div class="px-[32px] flex justify-between items-center">
-      <Button variant="secondary" class="rounded-none px-8!" @click="test()">
+      <Button variant="secondary" class="rounded-none px-8!" @click="doFetchModels(true)">
         <Spinner v-if="isTestLoading" />
         <Gauge v-else class="text-primary" />
-        TEST & FETCH MODELS
+        TEST
       </Button>
       <div class="flex items-center gap-4">
         <Button variant="outline" class="rounded-none" @click="$router.back()">Cancel</Button>
@@ -309,8 +309,11 @@ const handleSelectedModels = (selectedModels: ModelConfig[]) => {
 const handleDeleteModel = (model: ModelConfig) => {
   models.value = models.value.filter((m) => m.name !== model.name);
 };
-const test = async () => {
+const doFetchModels = async (force: boolean = false) => {
   const result = await form.validate();
+  if (!force && availableModels.value.length > 0) {
+    return;
+  }
   if (result.valid && result.values) {
     return toast
       .promise(fetchModels(result.values as ProviderConfig), {
@@ -322,7 +325,7 @@ const test = async () => {
   }
 };
 const testAndAdd = async () => {
-  await test();
+  await doFetchModels();
   addBtn.value?.$el?.click();
 };
 const save = async () => {
