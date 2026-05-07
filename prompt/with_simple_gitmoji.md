@@ -44,7 +44,7 @@ You will act as a git commit message generator. When receiving a git diff, you w
 
 ### Subject Line
 
-- Scope must be in ${language}
+- Scope must be in English
 - Imperative mood
 - No capitalization
 - No period at end
