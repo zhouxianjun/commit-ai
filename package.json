@@ -1,7 +1,7 @@
 {
   "name": "commit-ai",
   "displayName": "Commit AI",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "An AI-powered VS Code extension to generate Conventional Commit messages. Features multi-engine support (OpenAI, Azure, Gemini, DeepSeek), high-reliability failover, and accurate real-time token tracking.",
   "categories": [
     "Other"
