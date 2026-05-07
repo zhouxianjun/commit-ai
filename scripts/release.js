@@ -12,9 +12,29 @@ function run(command) {
 
 async function release() {
   const pkgPath = path.join(__dirname, '../package.json');
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-  const currentVersion = `v${pkg.version}`;
+  let pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
 
+  // 0. Handle version bump if requested
+  const versionArg = process.argv[2];
+  if (versionArg && ['patch', 'minor', 'major'].includes(versionArg)) {
+    console.log(`🆙 Bumping version (${versionArg})...`);
+    execSync(`npm version ${versionArg} --no-git-tag-version`);
+    // Re-read package.json to get the new version
+    pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+    const newVersion = `v${pkg.version}`;
+    console.log(`✅ Version bumped to ${newVersion}`);
+
+    // Commit the version bump
+    try {
+      execSync('git add package.json');
+      execSync(`git commit -m "chore(release): ${newVersion}"`);
+      console.log(`✅ Committed version bump: ${newVersion}`);
+    } catch (e) {
+      console.log('⚠️ Nothing to commit or commit failed.');
+    }
+  }
+
+  const currentVersion = `v${pkg.version}`;
   console.log(`🚀 Starting release process for ${currentVersion}...`);
 
   // 1. Get the last tag
@@ -53,15 +73,18 @@ async function release() {
     // Check if tag already exists
     const tagExists = run(`git tag -l "${currentVersion}"`);
     if (tagExists) {
-      console.log(`⚠️ Tag ${currentVersion} already exists. Skipping creation.`);
+      console.log(`⚠️ Tag ${currentVersion} already exists. Updating it with changelog...`);
+      // Use -f to overwrite existing tag with new metadata
+      execSync(`git tag -a -f ${currentVersion} -m "Release ${currentVersion}\n\n${changes}"`);
     } else {
       execSync(`git tag -a ${currentVersion} -m "Release ${currentVersion}\n\n${changes}"`);
-      console.log(`✅ Tag ${currentVersion} created locally.`);
     }
+    console.log(`✅ Tag ${currentVersion} ready.`);
 
     // 4. Push tag
-    console.log(`📤 Pushing tag ${currentVersion} to origin...`);
-    execSync(`git push origin ${currentVersion}`);
+    console.log(`📤 Pushing ${currentVersion} and commits to origin...`);
+    execSync(`git push origin main`); // Push the version bump commit
+    execSync(`git push origin ${currentVersion} --force`); // Push the tag (force if it was updated)
     console.log('🚀 Release complete! GitHub Action should start shortly.');
   } catch (error) {
     console.error('❌ Error during release:', error.message);
