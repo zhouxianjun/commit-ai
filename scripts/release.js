@@ -19,11 +19,16 @@ async function release() {
 
   // 1. Get the last tag
   let lastTag = run('git describe --tags --abbrev=0');
+  let comparisonBase = lastTag;
+
+  if (lastTag === currentVersion) {
+    comparisonBase = run(`git describe --tags --abbrev=0 ${lastTag}^`);
+  }
 
   let logCommand = '';
-  if (lastTag) {
-    console.log(`📦 Last version found: ${lastTag}`);
-    logCommand = `git log ${lastTag}..HEAD --oneline --pretty=format:"- %s (%h)"`;
+  if (comparisonBase) {
+    console.log(`📦 Comparing with base version: ${comparisonBase}`);
+    logCommand = `git log ${comparisonBase}..HEAD --oneline --pretty=format:"- %s (%h)"`;
   } else {
     console.log('📦 No previous tags found. Collecting all commits...');
     logCommand = `git log --oneline --pretty=format:"- %s (%h)"`;
