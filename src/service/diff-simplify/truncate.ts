@@ -10,7 +10,7 @@ export class TruncateSimplifier implements Simplifier {
     return file.bodyCharCount > options.maxFileChars;
   }
   execute(file: DiffFile, options: SimplifyOptions) {
-    const raw = file.rawContent;
+    const raw = file.lines.join('\n');
     // 寻找第一个 @@ 的位置，即 body 的开始
     const bodyIndex = raw.indexOf('\n@@');
     if (bodyIndex === -1) {
