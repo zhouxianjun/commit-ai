@@ -6,7 +6,7 @@
       enabled ? 'before:bg-primary' : 'before:bg-secondary'
     ]"
   >
-    <div class="flex flex-1 items-center gap-8">
+    <div class="flex flex-1 items-center gap-8 overflow-hidden">
       <div class="flex flex-col items-center gap-1">
         <Switch v-model="enabled" />
         <span
@@ -19,8 +19,10 @@
           {{ enabled ? 'ENABLED' : 'DISABLED' }}
         </span>
       </div>
-      <div class="flex flex-col gap-2">
-        <div class="text-foreground font-bold text-2xl">{{ model.name }}</div>
+      <div class="flex flex-col gap-2 overflow-hidden min-w-[200px]">
+        <div class="text-foreground font-bold text-2xl text-ellipsis line-clamp-2">
+          {{ model.name }}
+        </div>
         <div v-if="tokenStats" class="flex items-center gap-1">
           <span class="text-sm text-muted-foreground"
             >{{ formatToken(tokenStats.inputTokens) }}/{{
@@ -30,7 +32,7 @@
           <span class="text-xs text-muted-foreground/50">tokens</span>
         </div>
       </div>
-      <div class="flex-1 grid grid-cols-[repeat(auto-fill,200px)] gap-4">
+      <div class="min-w-[420px] flex-1 grid grid-cols-[repeat(auto-fill,200px)] gap-4">
         <div class="flex flex-col gap-4">
           <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-2">

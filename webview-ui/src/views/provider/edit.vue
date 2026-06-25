@@ -14,11 +14,20 @@
               :models="models"
               @selected="handleSelectedModels"
             >
-              <Button ref="addBtn" variant="default" @click="doFetchModels()">
+              <Button ref="addBtn" variant="outline" @click="doFetchModels()">
                 <Plus />
-                ADD MODEL
+                SELECT MODEL
               </Button>
             </ModelDialog>
+            <ManualDialog
+              :existing-model-names="models.map((m) => m.name)"
+              @add="handleManualAdd"
+            >
+              <Button variant="default">
+                <Plus />
+                MANUAL ADD
+              </Button>
+            </ManualDialog>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-6 items-start">
@@ -180,6 +189,19 @@
               <Plus class="mr-2 h-4 w-4" />
               TEST & ADD MODELS
             </Button>
+            <ManualDialog
+              :existing-model-names="models.map((m) => m.name)"
+              @add="handleManualAdd"
+            >
+              <Button
+                variant="outline"
+                size="lg"
+                class="h-12 px-10 rounded-full hover:bg-secondary/80 transition-all duration-300"
+              >
+                <Plus class="mr-2 h-4 w-4" />
+                MANUALLY ADD MODEL
+              </Button>
+            </ManualDialog>
           </div>
         </div>
       </div>
@@ -231,6 +253,7 @@ import { cloneDeep, isNil } from 'lodash-es';
 import { useDefaultConfig } from '@/composables/use-default-config';
 import { Checkbox } from '@/components/ui/checkbox';
 import ModelDialog from './__components__/model-dialog.vue';
+import ManualDialog from './__components__/manual-dialog.vue';
 import { useProviderModels } from '@/composables/use-provider-models';
 import { useRoute, useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -305,6 +328,12 @@ const providerConfig = computed(() => {
 
 const handleSelectedModels = (selectedModels: ModelConfig[]) => {
   models.value.push(...selectedModels);
+};
+const handleManualAdd = (modelName: string) => {
+  models.value.push({
+    name: modelName,
+    enabled: true
+  });
 };
 const handleDeleteModel = (model: ModelConfig) => {
   models.value = models.value.filter((m) => m.name !== model.name);
