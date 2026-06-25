@@ -103,7 +103,7 @@ This project is inspired by the core ideas of [ai-commit](https://github.com/Sit
 | `temperature`     | `number`  | `0.7`   | Sampling temperature (0-2). Higher is more random, lower is more focused.                                                    |
 | `maxTokens`       | `number`  | `0`     | Max output tokens (0 = no limit).                                                                                            |
 | `maxInputTokens`  | `number`  | `0`     | Max input context window (0 = auto-detect based on model name).                                                              |
-| `reasoningEffort` | `string`  | `none`  | **Reasoning Effort**: Applied to OpenAI o1/o3 and mapped to "Thinking/Think" parameters for other models (e.g., Gemini 2.0). |
+| `reasoningEffort` | `string`  | `default` | **Reasoning Effort**: Applied to OpenAI o1/o3 and mapped to "Thinking/Think" parameters for other models (e.g., Gemini 2.0). 'default' = not passed. |
 | `options`         | `object`  | `{}`    | Key-value pairs passed directly to the underlying SDK.                                                                       |
 
 ---

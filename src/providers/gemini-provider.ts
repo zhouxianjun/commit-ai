@@ -51,15 +51,18 @@ export class GeminiProvider implements AIProvider<GenerateContentResponse> {
       abortSignal: signal,
       httpOptions: { timeout: this.config.timeout },
       temperature: modelConfig.temperature,
-      maxOutputTokens: modelConfig.maxTokens,
-      thinkingConfig:
+      maxOutputTokens: modelConfig.maxTokens
+    };
+
+    if (modelConfig.reasoningEffort && modelConfig.reasoningEffort !== 'default') {
+      requestParams.thinkingConfig =
         modelConfig.reasoningEffort === 'none'
           ? { thinkingBudget: 0 }
           : {
               thinkingBudget: -1,
               thinkingLevel: this.transformThinkLevel(modelConfig.reasoningEffort)
-            }
-    };
+            };
+    }
 
     return this.client.models.generateContent({
       model: modelConfig.name,

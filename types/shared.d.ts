@@ -6,7 +6,7 @@ export interface ModelConfig {
   temperature?: number;
   maxTokens?: number;
   maxInputTokens?: number;
-  reasoningEffort?: ReasoningEffort;
+  reasoningEffort?: ReasoningEffort | 'default';
   options?: Record<string, unknown>;
 }
 

@@ -218,6 +218,7 @@
           "commit-ai.reasoningEffort": {
             "type": "string",
             "enum": [
+              "default",
               "none",
               "minimal",
               "low",
@@ -225,8 +226,8 @@
               "high",
               "xhigh"
             ],
-            "default": "none",
-            "description": "Global default reasoning effort for OpenAI reasoning models (o1/o3). 'none' = no reasoning tokens."
+            "default": "default",
+            "description": "Global default reasoning effort for OpenAI reasoning models (o1/o3). 'default' = not passed."
           }
         }
       },
@@ -339,12 +340,14 @@
                       "reasoningEffort": {
                         "type": "string",
                         "enum": [
+                          "default",
                           "none",
                           "low",
                           "medium",
                           "high"
                         ],
-                        "description": "For OpenAI reasoning models (o1/o3): controls reasoning effort. 'none' = no reasoning tokens."
+                        "default": "default",
+                        "description": "For OpenAI reasoning models (o1/o3): controls reasoning effort. 'default' = not passed."
                       },
                       "options": {
                         "type": "object",

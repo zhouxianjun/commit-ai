@@ -103,7 +103,7 @@
 | `temperature`     | `number`  | `0.7`  | 采样温度 (0-2)。越大越随机，越小越严谨。                                                        |
 | `maxTokens`       | `number`  | `0`    | 最大输出 Token 数 (0 为不限制)。                                                                |
 | `maxInputTokens`  | `number`  | `0`    | 最大输入上下文限制 (0 为根据模型名自动识别)。                                                   |
-| `reasoningEffort` | `string`  | `none` | **推理力度**：适用于 OpenAI o1/o3 及其映射到其他模型（如 Gemini 2.0）的 "Thinking/Think" 参数。 |
+| `reasoningEffort` | `string`  | `default` | **推理力度**：适用于 OpenAI o1/o3 及其映射到其他模型（如 Gemini 2.0）的 "Thinking/Think" 参数。'default' = 不传。 |
 | `options`         | `object`  | `{}`   | 扩展参数，透传给底层 SDK。                                                                      |
 
 ---

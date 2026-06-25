@@ -86,11 +86,12 @@
               <label for="reasoningEffort" class="text-foreground/50 text-sm">THINKING DEPTH</label>
             </div>
           </div>
-          <Select v-model="reasoningEffort">
+          <Select v-model="reasoningEffort" :disabled="!overrideReasoningEffort">
             <SelectTrigger class="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="default"> Default </SelectItem>
               <SelectItem value="none"> None </SelectItem>
               <SelectItem value="minimal"> Minimal </SelectItem>
               <SelectItem value="low"> Low </SelectItem>

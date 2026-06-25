@@ -52,9 +52,12 @@ export class OpenAIProvider implements AIProvider<ChatCompletion> {
       model: modelConfig.name,
       messages: openaiMessages,
       temperature: modelConfig.temperature,
-      max_tokens: modelConfig.maxTokens,
-      reasoning_effort: modelConfig.reasoningEffort
+      max_tokens: modelConfig.maxTokens
     };
+
+    if (modelConfig.reasoningEffort && modelConfig.reasoningEffort !== 'default') {
+      requestParams.reasoning_effort = modelConfig.reasoningEffort;
+    }
 
     if (modelConfig.options) {
       Object.assign(requestParams, modelConfig.options);
